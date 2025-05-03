@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReverseEng Hub - Préparation aux partiels de Reverse Engineering</title>
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Font: Fira Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="src/assets/css/style.css">
+</head>
+<body>
+    <!-- Navbar will be loaded here -->
+    <header id="navbar-container"></header>
+
+    <!-- Main Container -->
+    <div class="container mx-auto px-2 sm:px-4 py-8">
+        <!-- Main content will be loaded here -->
+        <main id="app-content"></main>
+        </div>
+
+    <!-- Footer will be loaded here -->
+    <footer id="footer-container"></footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/prism.min.js"></script>
+
+    <!-- Load individual components/controllers - App.js will import them -->
+    <!-- We don't strictly need to list them all here if App.js is the entry point -->
+    <script type="module" src="src/assets/js/components/ElfVisualizer.js"></script>
+    <script type="module" src="src/assets/js/components/PeVisualizer.js"></script>
+
+    <!-- Main Application Logic Entry Point -->
+    <script type="module" src="src/assets/js/App.js"></script>
+
+    <!-- Scroll-to-Top Button -->
+    <button id="scroll-to-top-btn" title="Retour en haut"
+            class="fixed bottom-5 right-5 p-3 rounded-full bg-purple-600 text-white shadow-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transition-opacity duration-300 opacity-0 pointer-events-none z-50">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+</body>
+</html>

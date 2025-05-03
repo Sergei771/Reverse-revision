@@ -1,0 +1,275 @@
+<section id="executable-formats-content" class="content-section">
+    <h2 class="text-3xl font-bold mb-6 gradient-text">Formats de Fichiers Exécutables</h2>
+    
+    <div class="concept-card">
+        <h3 class="text-xl font-semibold mb-3">Comprendre les formats binaires</h3>
+        <p>Les formats exécutables définissent la structure des fichiers binaires et déterminent comment le système d'exploitation les charge en mémoire pour les exécuter. Les deux formats principaux sont ELF (systèmes UNIX/Linux) et PE (Windows).</p>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Format ELF (Executable and Linkable Format)</h3>
+    <p class="mb-4">Format standard pour les exécutables sous Linux, FreeBSD, et autres systèmes UNIX-like.</p>
+
+    <div class="diagram-container">
+        <h4 class="text-xl font-semibold mb-3 text-center">Structure d'un fichier ELF</h4>
+        <div class="flex flex-col items-center">
+            <div class="diagram-box w-64 bg-purple-900">En-tête ELF</div>
+            <div class="diagram-box w-64 bg-blue-900">Table des en-têtes de programme</div>
+            <div class="diagram-box w-64 bg-green-900">.text (code exécutable)</div>
+            <div class="diagram-box w-64 bg-yellow-900">.data (données initialisées)</div>
+            <div class="diagram-box w-64 bg-red-900">.bss (données non initialisées)</div>
+            <div class="diagram-box w-64 bg-pink-900">Autres sections</div>
+            <div class="diagram-box w-64 bg-indigo-900">Table des symboles</div>
+            <div class="diagram-box w-64 bg-blue-900">Table des en-têtes de section</div>
+        </div>
+    </div>
+
+    <h4 class="text-xl font-semibold mt-6 mb-3">Composants clés d'un fichier ELF</h4>
+    <div class="grid md:grid-cols-2 gap-4">
+        <div class="content-section">
+            <h5 class="text-lg font-semibold mb-2">En-tête ELF</h5>
+            <p>Contient les informations de base sur le fichier :</p>
+            <ul class="list-disc pl-5 space-y-1">
+                <li>Magic number (0x7F 'ELF')</li>
+                <li>Architecture (32/64-bit)</li>
+                <li>Endianness (little/big)</li>
+                <li>Type de fichier (exécutable, objet, etc.)</li>
+                <li>Machine cible (x86, ARM, etc.)</li>
+                <li>Points d'entrée</li>
+            </ul>
+        </div>
+        <div class="content-section">
+            <h5 class="text-lg font-semibold mb-2">Sections importantes</h5>
+            <ul class="list-disc pl-5 space-y-1">
+                <li><strong>.text</strong> - Code exécutable</li>
+                <li><strong>.data</strong> - Données initialisées</li>
+                <li><strong>.bss</strong> - Données non initialisées</li>
+                <li><strong>.rodata</strong> - Données en lecture seule</li>
+                <li><strong>.symtab</strong> - Table des symboles</li>
+                <li><strong>.dynamic</strong> - Informations de liaison dynamique</li>
+                <li><strong>.plt/.got</strong> - Tables pour résolution dynamique</li>
+            </ul>
+            <!-- TODO: Développer les explications sur les sections spécifiques ELF -->
+            <p class="mt-2 text-sm italic">Contenu à ajouter : Détails sur le rôle de .plt, .got, .symtab, .dynamic.</p>
+            <div class="mt-4 pl-5 space-y-2 text-sm">
+                <p><strong>.plt (Procedure Linkage Table):</strong> Utilisée pour les appels de fonctions externes dans les bibliothèques partagées. Contient du code "trampoline" qui saute vers l'adresse réelle de la fonction (résolue la première fois via le GOT).</p>
+                <p><strong>.got (Global Offset Table):</strong> Table d'adresses utilisées par le code pour accéder aux fonctions et variables globales. Pour les fonctions externes, elle est initialement remplie avec des pointeurs vers le résolveur dynamique, puis mise à jour par le linker dynamique (`ld.so`) avec les vraies adresses lors du premier appel via le PLT.</p>
+                <p><strong>.symtab (Symbol Table):</strong> Contient des informations sur les symboles du fichier (fonctions, variables globales/statiques), utilisés principalement pour le débogage et l'édition de liens statique. Généralement supprimée (`stripped`) des binaires distribués.</p>
+                <p><strong>.dynamic:</strong> Contient des informations nécessaires à l'édition de liens dynamique, comme les bibliothèques requises, l'emplacement du GOT, du PLT, de la table des symboles dynamiques (.dynsym), et de la table des chaînes dynamiques (.dynstr).</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="concept-card">
+        <h4 class="text-xl font-semibold mb-3">Visualisation Interactive : En-tête ELF</h4>
+        <p>Ci-dessous se trouve une représentation tabulaire des champs importants de l'en-tête ELF. Une version plus interactive pourrait être développée ultérieurement pour permettre une exploration plus dynamique.</p>
+        <div id="elf-header-visualizer" class="mt-4"></div>
+    </div>
+
+    <h4 class="text-xl font-semibold mt-6 mb-3">Analyse d'un fichier ELF avec les outils</h4>
+    <div class="code-block">
+        <pre><code class="language-bash"># Afficher l'en-tête ELF
+readelf -h executable
+
+# Afficher les sections
+readelf -S executable
+
+# Afficher la table des symboles
+readelf -s executable
+
+# Afficher les segments
+readelf -l executable
+
+# Désassembler la section .text
+objdump -d -j .text executable</code></pre>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Format PE (Portable Executable)</h3>
+    <p class="mb-4">Format standard pour les exécutables sous Windows (.exe, .dll, .sys, etc.).</p>
+
+    <div class="diagram-container">
+        <h4 class="text-xl font-semibold mb-3 text-center">Structure d'un fichier PE</h4>
+        <div class="flex flex-col items-center">
+            <div class="diagram-box w-64 bg-purple-900">DOS Header & DOS Stub</div>
+            <div class="diagram-box w-64 bg-blue-900">PE File Header</div>
+            <div class="diagram-box w-64 bg-green-900">Optional Header</div>
+            <div class="diagram-box w-64 bg-yellow-900">Section Table</div>
+            <div class="diagram-box w-64 bg-red-900">.text (code)</div>
+            <div class="diagram-box w-64 bg-pink-900">.data (données initialisées)</div>
+            <div class="diagram-box w-64 bg-indigo-900">.rdata (données en lecture seule)</div>
+            <div class="diagram-box w-64 bg-blue-900">Autres sections</div>
+        </div>
+    </div>
+
+    <h4 class="text-xl font-semibold mt-6 mb-3">Composants clés d'un fichier PE</h4>
+    <div class="grid md:grid-cols-2 gap-4">
+        <div class="content-section">
+            <h5 class="text-lg font-semibold mb-2">En-têtes</h5>
+            <ul class="list-disc pl-5 space-y-1">
+                <li><strong>DOS Header</strong> - Commence par "MZ"</li>
+                <li><strong>DOS Stub</strong> - Programme DOS affiché si exécuté sous DOS</li>
+                <li><strong>PE Header</strong> - Commence par "PE\0\0"</li>
+                <li><strong>Optional Header</strong> - Contient des informations sur l'image</li>
+                <li><strong>Section Table</strong> - Liste les sections du fichier</li>
+            </ul>
+        </div>
+        <div class="content-section">
+            <h5 class="text-lg font-semibold mb-2">Sections courantes</h5>
+            <ul class="list-disc pl-5 space-y-1">
+                <li><strong>.text</strong> - Code exécutable</li>
+                <li><strong>.data</strong> - Données initialisées</li>
+                <li><strong>.rdata</strong> - Données en lecture seule</li>
+                <li><strong>.idata</strong> - Table d'importation</li>
+                <li><strong>.edata</strong> - Table d'exportation</li>
+                <li><strong>.rsrc</strong> - Ressources (icônes, images, etc.)</li>
+                <li><strong>.reloc</strong> - Informations de relocalisation</li>
+            </ul>
+             <!-- TODO: Développer les explications sur les sections spécifiques PE -->
+            <p class="mt-2 text-sm italic">Contenu à ajouter : Détails sur le rôle de .idata, .edata, .rsrc, .reloc.</p>
+            <div class="mt-4 pl-5 space-y-2 text-sm">
+                <p><strong>.idata (Import Data):</strong> Contient l'Import Directory Table (IDT) qui liste les DLL externes et les fonctions importées par l'exécutable. Le chargeur Windows utilise cette section pour résoudre les adresses des fonctions importées au moment du chargement.</p>
+                <p><strong>.edata (Export Data):</strong> Contient l'Export Directory Table (EDT) qui liste les fonctions et variables que l'exécutable (souvent une DLL) rend disponibles pour d'autres modules. Permet aux autres programmes d'utiliser les fonctionnalités exportées.</p>
+                <p><strong>.rsrc (Resource Data):</strong> Contient les ressources de l'application, comme les icônes, images, curseurs, boîtes de dialogue, menus, chaînes de caractères (souvent pour la localisation), etc. Organisées en structure arborescente.</p>
+                <p><strong>.reloc (Relocation Data):</strong> Contient les informations de "relocalisation". Si l'exécutable ne peut pas être chargé à son adresse de base préférée (ImageBase), le chargeur doit ajuster (patcher) toutes les adresses absolues dans le code et les données. Cette section indique où ces ajustements sont nécessaires.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TODO: Créer une visualisation interactive des en-têtes PE -->
+    <div class="concept-card">
+        <h4 class="text-xl font-semibold mb-3">Visualisation Interactive : En-tête PE</h4>
+        <p>Ci-dessous se trouve une représentation tabulaire des champs importants des en-têtes PE (DOS, COFF, Optional). Une version plus interactive pourrait être développée ultérieurement.</p>
+        <div id="pe-header-visualizer" class="mt-4"></div>
+    </div>
+
+    <h4 class="text-xl font-semibold mt-6 mb-3">Tables d'importation et d'exportation</h4>
+    <div class="concept-card">
+        <p>Les tables d'importation et d'exportation sont cruciales pour l'analyse en reverse engineering car elles révèlent les fonctions utilisées par l'exécutable :</p>
+        
+        <div class="grid md:grid-cols-2 gap-4 mt-4">
+            <div>
+                <h5 class="text-lg font-semibold mb-2">Table d'importation</h5>
+                <p>Liste les fonctions que l'exécutable importe d'autres DLL :</p>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li>Nom des DLL importées</li>
+                    <li>Nom ou ordinal des fonctions</li>
+                    <li>Adresses des fonctions importées</li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-lg font-semibold mb-2">Table d'exportation</h5>
+                <p>Liste les fonctions que l'exécutable exporte pour d'autres programmes :</p>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li>Nom des fonctions exportées</li>
+                    <li>Adresses des fonctions</li>
+                    <li>Numéros d'ordinal</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="text-xl font-semibold mt-6 mb-3">Analyse d'un fichier PE avec les outils</h4>
+    <div class="code-block">
+        <pre><code class="language-bash"># Avec PEview (GUI) ou en ligne de commande :
+
+# Avec CFF Explorer (GUI)
+
+# Avec pestudio (GUI)
+
+# Avec PE-bear (GUI)
+
+# Ou en ligne de commande avec tools du package pev :
+pedump executable.exe
+pestr executable.exe
+pescan executable.exe</code></pre>
+    </div>
+
+    <!-- TODO: Ajouter des exemples de modification de binaires -->
+    <div class="concept-card">
+        <h4 class="text-xl font-semibold mb-3">Exemples : Modification de Binaires (ELF/PE)</h4>
+        <p>Contenu à ajouter : Exemples simples de modification (patching) d'un binaire pour changer son comportement, par exemple, en modifiant une instruction de saut ou une chaîne de caractères, en utilisant un éditeur hexadécimal ou des outils comme `radare2`.</p>
+        <div class="mt-4 space-y-4">
+            <div>
+                <h5 class="text-lg font-semibold mb-2">Patching simple : Modifier une chaîne de caractères</h5>
+                <p>Supposons un programme simple qui affiche "Hello, World!". Cette chaîne est stockée dans une section de données (ex: `.rodata` en ELF, `.rdata` en PE). On peut la localiser avec des outils comme `strings` ou dans un désassembleur, puis utiliser un éditeur hexadécimal (comme HxD, Bless, ou `hexedit`) pour la remplacer par autre chose (par exemple, "Hello, Hack!"), en faisant attention à ne pas dépasser la taille originale ou à gérer les null terminators.</p>
+                <pre><code class="language-bash hljs language-plaintext"># Exemple avec un éditeur hexadécimal :
+1. Trouver l'offset de la chaîne "Hello, World!" dans le fichier binaire.
+2. Ouvrir le fichier avec l'éditeur hexadécimal.
+3. Naviguer jusqu'à l'offset.
+4. Remplacer les octets correspondants à "Hello, World!" (48 65 6C 6C 6F 2C 20 57 6F 72 6C 64 21 00) 
+   par ceux de "Hello, Hack! " (48 65 6C 6C 6F 2C 20 48 61 63 6B 21 20 00) - attention à la longueur!
+5. Sauvegarder le fichier modifié.</code></pre>
+            </div>
+            <div>
+                <h5 class="text-lg font-semibold mb-2">Patching de code : Inverser une condition de saut</h5>
+                <p>Imaginons une vérification de licence simpliste :</p>
+                <pre><code class="language-c hljs language-c">if (is_licence_valid()) {\n    printf("Licence OK\n");\n} else {\n    printf("Licence Invalide!\n");\n    exit(1);\n}</code></pre>
+                <p>En assembleur (x86), cela pourrait se traduire par un appel à `is_licence_valid`, suivi d'un test du résultat (souvent dans `EAX`) et d'un saut conditionnel (par exemple, `jz` - Jump if Zero/Equal, ou `jnz` - Jump if Not Zero/Not Equal) qui saute par-dessus le code "Licence OK" si la licence est invalide.</p>
+                <p>Avec un désassembleur/débogueur (comme Ghidra, IDA, radare2, x64dbg), on peut localiser cette instruction de saut conditionnel. Pour contourner la vérification, on peut :</p>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li><strong>Remplacer le saut conditionnel par un saut inconditionnel (`jmp`)</strong> pour toujours exécuter le code "Licence OK".</li>
+                    <li><strong>Remplacer le saut conditionnel par des NOPs (`0x90`)</strong> : L'instruction de saut est neutralisée, le flux d'exécution continue vers le code "Licence OK".</li>
+                    <li><strong>Inverser la condition du saut</strong> : Remplacer un `jz` par un `jnz`, ou vice-versa (il faut trouver l'opcode correspondant).</li>
+                </ul>
+                <pre><code class="language-bash hljs language-plaintext"># Exemple avec radare2 (simplifié):
+r2 -w executable  # Ouvrir en mode écriture
+aaa               # Analyser le binaire
+s sym.main        # Aller à la fonction main (ou là où est la vérification)
+pdf               # Afficher le désassemblage pour trouver l'offset du saut (ex: 0x00401050)
+"wa jmp 0x00401060" @ 0x00401050  # Remplacer l'instruction à 0x00401050 par un jmp vers le bloc "Licence OK"
+# Ou :
+"wa nop" @ 0x00401050          # Remplacer l'instruction par un NOP (si elle fait 1 octet, sinon plusieurs wa nop)</code></pre>
+                <p class="mt-2 text-sm italic">Attention: Le patching de binaires peut facilement les corrompre si l'on ne fait pas attention aux tailles d'instructions, aux offsets, et aux effets secondaires. C'est une compétence clé en reverse engineering et en analyse de malware.</p>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Comparaison ELF vs PE</h3>
+    <div class="custom-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Caractéristique</th>
+                    <th>ELF</th>
+                    <th>PE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Système d'exploitation</td>
+                    <td>Linux, Unix, BSD</td>
+                    <td>Windows</td>
+                </tr>
+                <tr>
+                    <td>Magic number</td>
+                    <td>0x7F 'ELF'</td>
+                    <td>'MZ' + 'PE\0\0'</td>
+                </tr>
+                <tr>
+                    <td>Extensions courantes</td>
+                    <td>Aucune (.so pour lib. partagées)</td>
+                    <td>.exe, .dll, .sys</td>
+                </tr>
+                <tr>
+                    <td>Sections code</td>
+                    <td>.text</td>
+                    <td>.text</td>
+                </tr>
+                <tr>
+                    <td>Sections données</td>
+                    <td>.data, .bss, .rodata</td>
+                    <td>.data, .rdata</td>
+                </tr>
+                <tr>
+                    <td>Importations</td>
+                    <td>.plt, .got</td>
+                    <td>.idata</td>
+                </tr>
+                <tr>
+                    <td>Exportations</td>
+                    <td>.dynsym, .dynstr</td>
+                    <td>.edata</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section> 

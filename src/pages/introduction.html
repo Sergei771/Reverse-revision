@@ -1,0 +1,265 @@
+<!-- Hero Section -->
+<div class="text-center mb-12 py-8">
+    <h1 class="text-4xl font-bold mb-4">Préparation aux Partiels de <span class="gradient-text">Reverse Engineering</span></h1>
+    <p class="text-xl mb-6">Tout ce dont vous avez besoin pour maîtriser le reverse engineering en C</p>
+    <div class="flex flex-wrap justify-center gap-4">
+        <div class="badge badge-primary">Cyber Sécurité</div>
+        <div class="badge badge-secondary">Reverse Engineering</div>
+        <div class="badge badge-accent">Langage C</div>
+        <div class="badge badge-primary">Formats ELF/PE</div>
+        <div class="badge badge-secondary">Analyse de code</div>
+    </div>
+</div>
+
+<!-- Introduction Section Content -->
+<section id="introduction-content" class="content-section">
+    <h2 class="text-3xl font-bold mb-6 gradient-text">Fondamentaux du Reverse Engineering</h2>
+    
+    <div class="concept-card">
+        <h3 class="text-xl font-semibold mb-3">Qu'est-ce que le Reverse Engineering ?</h3>
+        <p>Le <strong>reverse engineering</strong> (ou rétro-ingénierie) est le processus qui consiste à analyser un système, un dispositif ou un logiciel pour comprendre son fonctionnement interne, sa structure et ses algorithmes sans avoir accès à sa documentation ou à son code source original.</p>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Objectifs et Applications en Cybersécurité</h3>
+    <div class="grid md:grid-cols-2 gap-4 my-4">
+        <div class="content-section">
+            <h4 class="text-xl font-semibold mb-2 text-purple-400"><i class="fas fa-shield-alt mr-2"></i>Analyse de Vulnérabilités</h4>
+            <p>Identification des failles de sécurité dans les applications pour les corriger avant qu'elles ne soient exploitées.</p>
+        </div>
+        <div class="content-section">
+            <h4 class="text-xl font-semibold mb-2 text-purple-400"><i class="fas fa-bug mr-2"></i>Analyse de Malware</h4>
+            <p>Étude des logiciels malveillants pour comprendre leurs mécanismes et développer des contre-mesures.</p>
+        </div>
+        <div class="content-section">
+            <h4 class="text-xl font-semibold mb-2 text-purple-400"><i class="fas fa-unlock mr-2"></i>Contournement de Protections</h4>
+            <p>Analyse des mécanismes de protection pour tester leur efficacité ou les contourner légitimement.</p>
+        </div>
+        <div class="content-section">
+            <h4 class="text-xl font-semibold mb-2 text-purple-400"><i class="fas fa-puzzle-piece mr-2"></i>Interopérabilité</h4>
+            <p>Compréhension des formats et protocoles propriétaires pour développer des solutions compatibles.</p>
+        </div>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Méthodologie de Reverse Engineering</h3>
+    <div class="diagram-container">
+        <div class="flex flex-col md:flex-row justify-between text-center">
+            <div class="diagram-box flex-1">
+                <i class="fas fa-search text-2xl mb-2 text-purple-500"></i>
+                <p class="font-semibold">1. Analyse statique</p>
+                <p class="text-sm">Étude du binaire sans l'exécuter</p>
+            </div>
+            <div class="text-purple-500 my-auto">→</div>
+            <div class="diagram-box flex-1">
+                <i class="fas fa-play-circle text-2xl mb-2 text-purple-500"></i>
+                <p class="font-semibold">2. Analyse dynamique</p>
+                <p class="text-sm">Observation pendant l'exécution</p>
+            </div>
+            <div class="text-purple-500 my-auto">→</div>
+            <div class="diagram-box flex-1">
+                <i class="fas fa-code text-2xl mb-2 text-purple-500"></i>
+                <p class="font-semibold">3. Reconstruction</p>
+                <p class="text-sm">Reconstruction d'algorithmes et structures</p>
+            </div>
+            <div class="text-purple-500 my-auto">→</div>
+            <div class="diagram-box flex-1">
+                <i class="fas fa-file-alt text-2xl mb-2 text-purple-500"></i>
+                <p class="font-semibold">4. Documentation</p>
+                <p class="text-sm">Documenter les découvertes</p>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Outils Essentiels</h3>
+    <div class="grid md:grid-cols-3 gap-4">
+        <div class="content-section">
+            <h4 class="text-xl font-semibold mb-2"><i class="fas fa-tools text-purple-400 mr-2"></i>Désassembleurs</h4>
+            <ul class="list-disc pl-5 space-y-1">
+                <li><strong>Ghidra</strong> - Outil open-source de la NSA</li>
+                <li><strong>IDA Pro</strong> - Désassembleur professionnel</li>
+                <li><strong>Radare2</strong> - Framework d'analyse open-source</li>
+            </ul>
+        </div>
+        <div class="content-section">
+            <h4 class="text-xl font-semibold mb-2"><i class="fas fa-bug text-purple-400 mr-2"></i>Débogueurs</h4>
+            <ul class="list-disc pl-5 space-y-1">
+                <li><strong>GDB</strong> - GNU Debugger</li>
+                <li><strong>WinDbg</strong> - Débogueur Windows</li>
+                <li><strong>x64dbg</strong> - Débogueur open-source pour Windows</li>
+            </ul>
+        </div>
+        <div class="content-section">
+            <h4 class="text-xl font-semibold mb-2"><i class="fas fa-vial text-purple-400 mr-2"></i>Analyseurs dynamiques</h4>
+            <ul class="list-disc pl-5 space-y-1">
+                <li><strong>Valgrind</strong> - Suite d'outils pour déboguer</li>
+                <li><strong>Frida</strong> - Toolkit d'instrumentation dynamique</li>
+                <li><strong>Process Monitor</strong> - Surveillance des processus</li>
+            </ul>
+        </div>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Ghidra en détail</h3>
+    <div class="content-section">
+        <p class="mb-4">Ghidra est un outil développé par la NSA et rendu public en 2019. Il offre des fonctionnalités puissantes pour le reverse engineering :</p>
+        <ul class="list-disc pl-5 space-y-2">
+            <li><strong>Désassembleur multi-plateforme</strong> - Supporte de nombreuses architectures (x86, ARM, MIPS, etc.)</li>
+            <li><strong>Décompilateur</strong> - Convertit le code machine en pseudo-code C</li>
+            <li><strong>Interface graphique intuitive</strong> - Visualisation du graphe des fonctions</li>
+            <li><strong>Scripting</strong> - Extensible via Java et Python</li>
+            <li><strong>Collaboration</strong> - Permet le travail en équipe sur des projets</li>
+        </ul>
+    </div>
+
+    <!-- Remplacement pour TODO 1: Approfondissement : Registres et Pile -->
+    <div class="concept-card">
+        <h4 class="text-xl font-semibold mb-3">Approfondissement : Registres et Pile (x86-32)</h4>
+        <p class="mb-4">Comprendre les registres du CPU et le fonctionnement de la pile est fondamental pour analyser le code assembleur. Voici un aperçu pour l'architecture x86-32 (les noms sont étendus en x86-64, ex: EAX devient RAX).</p>
+        
+        <details class="mb-4">
+            <summary class="font-semibold cursor-pointer hover:text-purple-400">Détails des Registres principaux</summary>
+            <div class="custom-table mt-2">
+                <table>
+                    <thead>
+                        <tr><th>Registre</th><th>Description</th><th>Usage courant</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>EAX</td><td>Accumulateur</td><td>Stocke les résultats d'opérations, valeur de retour des fonctions</td></tr>
+                        <tr><td>EBX</td><td>Base</td><td>Pointeur de base pour accès mémoire (souvent sauvegardé)</td></tr>
+                        <tr><td>ECX</td><td>Compteur</td><td>Utilisé comme compteur dans les boucles (ex: `LOOP`)</td></tr>
+                        <tr><td>EDX</td><td>Données</td><td>Extension de EAX pour certaines opérations (multiplication, division), I/O</td></tr>
+                        <tr><td>ESI</td><td>Source Index</td><td>Pointeur source pour opérations sur chaînes/mémoire</td></tr>
+                        <tr><td>EDI</td><td>Destination Index</td><td>Pointeur destination pour opérations sur chaînes/mémoire</td></tr>
+                        <tr><td>ESP</td><td>Stack Pointer</td><td>Pointe vers le sommet actuel de la pile (change avec PUSH/POP)</td></tr>
+                        <tr><td>EBP</td><td>Base Pointer</td><td>Pointe vers la base du "stack frame" de la fonction courante (utilisé pour accéder aux arguments et variables locales)</td></tr>
+                        <tr><td>EIP</td><td>Instruction Pointer</td><td>Contient l'adresse de la prochaine instruction à exécuter (ne peut être modifié directement)</td></tr>
+                        <tr><td>EFLAGS</td><td>Flags Register</td><td>Contient des bits indiquant le résultat de la dernière opération (Zero Flag ZF, Carry Flag CF, Sign Flag SF, Overflow Flag OF, etc.)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </details>
+
+        <h5 class="text-lg font-semibold mt-4 mb-2">Fonctionnement de la Pile (Stack) :</h5>
+        <p>La pile est une zone mémoire LIFO (Last-In, First-Out) utilisée pour stocker temporairement des données, passer des arguments aux fonctions, stocker les variables locales, et sauvegarder l'état lors des appels de fonction.</p>
+        <ul class="list-disc pl-5 space-y-1 mb-4">
+            <li><strong>Croissance :</strong> Sur x86, la pile croît vers les adresses basses (les nouvelles données sont à des adresses plus petites).</li>
+            <li><strong>ESP :</strong> Pointe toujours vers le sommet actuel de la pile (la dernière donnée empilée).</li>
+            <li><strong>PUSH src :</strong> Décrémente ESP puis copie `src` à l'adresse pointée par ESP.</li>
+            <li><strong>POP dest :</strong> Copie la valeur à l'adresse d'ESP dans `dest` puis incrémente ESP.</li>
+        </ul>
+
+        <details>
+             <summary class="font-semibold cursor-pointer hover:text-purple-400">Détails : Appel de Fonction et Stack Frame</summary>
+            <div class="mt-2 pl-4 border-l-2 border-gray-700">
+                <p class="mb-2">Lorsqu'une fonction est appelée (`CALL` instruction) :</p>
+                <ol class="list-decimal pl-5 space-y-1 mb-2">
+                    <li>Les arguments sont souvent poussés sur la pile (généralement de droite à gauche en convention cdecl).</li>
+                    <li>L'instruction `CALL` pousse l'adresse de retour (l'instruction après le `CALL`) sur la pile.</li>
+                    <li>Le contrôle saute à l'adresse de la fonction appelée.</li>
+                    <li><strong>Prologue de la fonction appelée :</strong>
+                        <ul class="list-disc pl-5 space-y-1 mt-1">
+                            <li>Sauvegarde l'ancien EBP : `PUSH EBP`</li>
+                            <li>Établit le nouveau frame : `MOV EBP, ESP`</li>
+                            <li>Alloue de l'espace pour les variables locales : `SUB ESP, taille_locales`</li>
+                        </ul>
+                    </li>
+                    <li>Le corps de la fonction s'exécute (accès aux arguments via `[EBP + offset_positif]`, aux locales via `[EBP - offset_négatif]`).</li>
+                    <li><strong>Épilogue de la fonction appelée :</strong>
+                        <ul class="list-disc pl-5 space-y-1 mt-1">
+                            <li>Libère l'espace des locales : `MOV ESP, EBP` (ou `LEAVE`)</li>
+                            <li>Restaure l'ancien EBP : `POP EBP` (inclus dans `LEAVE`)</li>
+                        </ul>
+                    </li>
+                    <li>L'instruction `RET` dépile l'adresse de retour dans EIP, le contrôle revient à l'appelant.</li>
+                    <li>L'appelant nettoie les arguments de la pile (si nécessaire selon la convention d'appel).</li>
+                </ol>
+                <p>Comprendre ce mécanisme est crucial pour suivre le flux d'exécution et analyser les variables locales et les paramètres.</p>
+            </div>
+        </details>
+    </div>
+
+    <!-- Remplacement pour TODO 2: Ghidra en Pratique : Exemple -->
+    <div class="concept-card">
+        <h4 class="text-xl font-semibold mb-3">Ghidra en Pratique : Exemple Simple</h4>
+        <p class="mb-4">Voyons un exemple très simple d'utilisation de Ghidra avec un programme "Hello World" en C compilé.</p>
+        <div class="code-block mb-4"><pre><code class="language-c">// hello.c
+#include &lt;stdio.h&gt;
+
+void greet(const char* name) {
+    printf("Hello, %s!\n", name);
+}
+
+int main() {
+    char myName[] = "Reverse Engineer";
+    greet(myName);
+    return 0;
+}
+
+// Compilation (exemple Linux 32 bits):
+// gcc -m32 -no-pie -fno-stack-protector -o hello hello.c
+</code></pre></div>
+
+        <details>
+            <summary class="font-semibold cursor-pointer hover:text-purple-400">Étapes détaillées dans Ghidra</summary>
+            <ol class="list-decimal pl-5 space-y-2 mt-2">
+                <li><strong>Créer un projet :</strong> File -> New Project... -> Non-Shared Project -> Choisissez un répertoire et un nom de projet.</li>
+                <li><strong>Importer le fichier :</strong> File -> Import File... -> Sélectionnez votre binaire `hello` compilé. Cliquez sur OK dans la fenêtre d'importation (le format ELF/PE devrait être détecté). Double-cliquez sur le fichier dans le projet pour l'ouvrir dans le CodeBrowser.</li>
+                <li><strong>Analyser :</strong> Ghidra vous demandera d'analyser le fichier. Cliquez sur "Yes". Acceptez les options par défaut dans la fenêtre "Analysis Options" (ou ajustez si nécessaire) et cliquez sur "Analyze".</li>
+                <li><strong>Trouver `main` :</strong> Dans la fenêtre "Symbol Tree" (Window -> Symbol Tree si non visible), dépliez "Functions" et cherchez `main`. Double-cliquez dessus.</li>
+                <li><strong>Explorer :</strong>
+                    <ul class="list-disc pl-5 space-y-1 mt-1">
+                        <li>La fenêtre "Listing" montre le code désassemblé. Vous devriez voir l'appel (`CALL`) à la fonction `greet`.</li>
+                        <li>La fenêtre "Decompiler" (Window -> Decompiler) montre une tentative de reconstruction en pseudo-code C. Vous devriez y reconnaître la logique de `main` et l'appel à `greet`.</li>
+                    </ul>
+                </li>
+                <li><strong>Renommer :</strong> Dans le décompilateur, cliquez sur une variable locale (ex: `local_...` représentant `myName`). Appuyez sur `L` (ou clic droit -> Rename Variable) et donnez-lui un nom plus significatif, comme `studentName`. Le changement se répercute. Faites de même pour la fonction `greet` si elle a un nom générique (`FUN_...`): cliquez sur son nom dans le décompilateur ou le listing, appuyez sur `N` (ou clic droit -> Rename Function).</li>
+                <li><strong>Commenter :</strong> Cliquez sur une ligne dans le désassembleur ou le décompilateur. Appuyez sur `;` (point-virgule) pour ajouter un commentaire expliquant cette ligne.</li>
+            </ol>
+            <p class="mt-4">Cet exemple simple illustre le workflow de base : importer, analyser, naviguer, comprendre via le désassemblage et la décompilation, et annoter pour améliorer la clarté.</p>
+        </details>
+    </div>
+
+    <!-- Remplacement pour TODO 3: Procédure d'Analyse d'un Binaire Simple -->
+    <div class="concept-card">
+        <h4 class="text-xl font-semibold mb-3">Procédure d'Analyse d'un Binaire Simple</h4>
+        <p class="mb-4">Analyser un binaire inconnu demande une approche méthodique. Voici les étapes clés pour un petit programme C compilé :</p>
+        <details>
+             <summary class="font-semibold cursor-pointer hover:text-purple-400">Voir les étapes détaillées</summary>
+            <ol class="list-decimal pl-5 space-y-2 mt-2">
+                <li><strong>Reconnaissance initiale (Statique) :</strong>
+                    <ul class="list-disc pl-5 space-y-1 mt-1">
+                        <li>Utiliser `file mon_binaire` pour identifier le type de fichier (ELF 32/64-bit, PE, etc.).</li>
+                        <li>Exécuter `strings mon_binaire` pour extraire les chaînes de caractères lisibles (messages d'erreur, noms de fichiers, URLs, constantes...). Cela peut donner des indices rapides sur la fonctionnalité.</li>
+                        <li>Examiner les imports (fonctions de bibliothèques externes utilisées) et les exports (fonctions fournies par le binaire). Sous Linux: `readelf -s mon_binaire | grep FUNC`, `objdump -T mon_binaire`. Sous Windows: outils comme PE-bear, CFF Explorer, ou Ghidra/IDA. Les imports révèlent les capacités (ex: `printf` -> affichage, `socket` -> réseau, `CreateFile` -> manipulation de fichiers).</li>
+                    </ul>
+                </li>
+                <li><strong>Analyse Statique Approfondie (ex: Ghidra/IDA) :</strong>
+                    <ul class="list-disc pl-5 space-y-1 mt-1">
+                        <li>Charger le binaire dans l'outil et lancer l'analyse automatique.</li>
+                        <li>Identifier le point d'entrée principal (souvent `main`, `start`, ou une fonction similaire).</li>
+                        <li>Analyser le code désassemblé et/ou décompilé de la fonction principale. Suivre le flux logique principal.</li>
+                        <li>Identifier les appels à d'autres fonctions (internes ou externes via les imports). Analyser ces fonctions appelées.</li>
+                        <li>Repérer les structures de contrôle : boucles (`for`, `while`), conditions (`if`, `switch`). Le graphe de fonction est très utile ici.</li>
+                        <li>Rechercher les accès mémoire importants (variables globales, structures, arguments).</li>
+                        <li>Renommer les variables, fonctions, et ajouter des commentaires au fur et à mesure de la compréhension. C'est crucial pour ne pas se perdre.</li>
+                    </ul>
+                </li>
+                <li><strong>Analyse Dynamique (si besoin, ex: GDB/x64dbg) :</strong>
+                    <ul class="list-disc pl-5 space-y-1 mt-1">
+                        <li>Utiliser un débogueur si l'analyse statique n'est pas suffisante pour comprendre un comportement ou une valeur spécifique.</li>
+                        <li>Placer des points d'arrêt (`breakpoint`) aux endroits clés (début de `main`, avant/après un appel de fonction suspect, début d'une boucle).</li>
+                        <li>Exécuter le programme (`run`) et l'inspecter lorsqu'il s'arrête.</li>
+                        <li>Examiner l'état des registres (`info registers`) et de la mémoire (`x/`).</li>
+                        <li>Avancer pas à pas (`stepi` pour une instruction assembleur, `nexti` pour passer par-dessus un appel) pour observer les changements d'état.</li>
+                        <li>Fournir différentes entrées au programme pour voir comment il réagit.</li>
+                    </ul>
+                </li>
+                <li><strong>Synthèse et Documentation :</strong>
+                    <ul class="list-disc pl-5 space-y-1 mt-1">
+                        <li>Résumer le fonctionnement global du programme.</li>
+                        <li>Documenter les algorithmes clés, les structures de données importantes, et les éventuelles vulnérabilités trouvées.</li>
+                        <li>Le but est de reconstruire une compréhension fonctionnelle du binaire.</li>
+                    </ul>
+                </li>
+            </ol>
+        </details>
+    </div>
+</section> 

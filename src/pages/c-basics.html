@@ -1,0 +1,405 @@
+<section id="c-basics-content" class="content-section">
+    <h2 class="text-3xl font-bold mb-6 gradient-text">Langage C pour le Reverse Engineering</h2>
+    
+    <div class="concept-card">
+        <h3 class="text-xl font-semibold mb-3">Pourquoi le C est important en Reverse</h3>
+        <p>Le langage C est fondamental en reverse engineering car de nombreux systèmes d'exploitation, applications et logiciels malveillants sont écrits en C. Sa proximité avec le matériel et sa gestion explicite de la mémoire en font un langage dont la compréhension est essentielle pour analyser les binaires.</p>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Structure d'un programme C</h3>
+    <div class="code-block">
+        <pre><code class="language-c">// Inclusion des bibliothèques
+#include <stdio.h>
+
+// Déclaration des variables globales
+int globalVar = 10;
+
+// Déclaration des fonctions
+void maFonction(int param);
+
+// Fonction principale
+int main() {
+    // Variables locales
+    int localVar = 5;
+    
+    // Appel de fonction
+    maFonction(localVar);
+    
+    return 0;
+}
+
+// Définition des fonctions
+void maFonction(int param) {
+    printf("Valeur: %d\n", param + globalVar);
+}</code></pre>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Types de données et leur représentation</h3>
+    <div class="table-container">
+        <div class="custom-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Taille (bytes)</th>
+                        <th>Représentation en mémoire</th>
+                        <th>Exemple</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>char</td>
+                        <td>1</td>
+                        <td>Octet unique</td>
+                        <td>char c = 'A'; // 0x41</td>
+                    </tr>
+                    <tr>
+                        <td>int</td>
+                        <td>4 (généralement)</td>
+                        <td>Little/Big endian</td>
+                        <td>int x = 258; // 0x02 0x01 0x00 0x00 (little endian)</td>
+                    </tr>
+                    <tr>
+                        <td>float</td>
+                        <td>4</td>
+                        <td>IEEE 754</td>
+                        <td>float f = 3.14; // 0x40 0x48 0xF5 0xC3</td>
+                    </tr>
+                    <tr>
+                        <td>double</td>
+                        <td>8</td>
+                        <td>IEEE 754</td>
+                        <td>double d = 3.14; // 0x40 0x09 0x1E 0xB8 0x51 0xEB 0x85 0x1F</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Pointeurs et Gestion de Mémoire</h3>
+    <p class="mb-4">Les pointeurs sont des variables qui stockent des adresses mémoire et sont cruciaux pour comprendre la mémoire d'un programme.</p>
+    
+    <div class="grid md:grid-cols-2 gap-6">
+        <div>
+            <h4 class="text-xl font-semibold mb-3">Déclaration et initialisation</h4>
+            <div class="code-block">
+                <pre><code class="language-c">int *ptr;         // Déclare un pointeur vers un int
+int value = 42;
+ptr = &value;     // ptr contient l'adresse de value
+int dereference = *ptr;  // dereference contient 42</code></pre>
+            </div>
+        </div>
+        <div>
+            <h4 class="text-xl font-semibold mb-3">Représentation mémoire</h4>
+            <div class="table-container">
+                <div class="memory-diagram custom-table">
+                    <table class="w-full">
+                        <tr>
+                            <th>Variable</th>
+                            <th>Adresse</th>
+                            <th>Contenu</th>
+                        </tr>
+                        <tr>
+                            <td>value</td>
+                            <td>0x1000</td>
+                            <td>42</td>
+                        </tr>
+                        <tr>
+                            <td>ptr</td>
+                            <td>0x2000</td>
+                            <td>0x1000</td>
+                        </tr>
+                        <tr>
+                            <td>dereference</td>
+                            <td>0x3000</td>
+                            <td>42</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="text-xl font-semibold mt-6 mb-3">Arithmétique des pointeurs</h4>
+    <div class="code-block">
+        <pre><code class="language-c">int array[5] = {10, 20, 30, 40, 50};
+int *p = array;  // p pointe vers le premier élément
+
+// Accès aux éléments du tableau via pointeur
+printf("%d\n", *p);        // Affiche 10
+printf("%d\n", *(p + 2));  // Affiche 30 (p + 2 * sizeof(int))
+printf("%d\n", p[3]);      // Affiche 40 (syntaxe alternative)</code></pre>
+    </div>
+
+    <!-- Remplacement du TODO 1 : Explication détaillée des pointeurs -->
+    <div class="concept-card mt-6">
+        <h4 class="text-xl font-semibold mb-3">Comprendre les Opérations sur les Pointeurs</h4>
+        <p class="mb-4">Les pointeurs sont puissants mais nécessitent une compréhension claire de leur interaction avec la mémoire. Reprenons les opérations clés :</p>
+        
+        <div class="code-block"><pre><code class="language-c">int main() {
+    int value = 42;
+    int anotherValue = 100;
+    int *ptr = NULL; // Bonne pratique: initialiser les pointeurs à NULL
+
+    // 1. Opérateur 'Adresse de' (&)
+    ptr = &value; 
+    // Maintenant, 'ptr' contient l'ADRESSE où 'value' (42) est stockée.
+    // Supposons que 'value' est à l'adresse 0x7ffc12345678.
+    // Alors, ptr vaut 0x7ffc12345678.
+
+    // 2. Opérateur de Déréférencement (*)
+    int retrievedValue = *ptr;
+    // '*' lit la VALEUR à l'adresse contenue dans 'ptr'.
+    // Donc, retrievedValue vaut 42.
+    // *ptr peut aussi être utilisé pour MODIFIER la valeur pointée:
+    *ptr = 50; // La variable 'value' vaut maintenant 50!
+
+    // 3. Arithmétique des pointeurs (basée sur le type pointé!)
+    ptr = &value; // ptr pointe sur 'value'
+    // Supposons sizeof(int) == 4 octets.
+    // ptr + 1 ne signifie PAS ajouter 1 à l'adresse !
+    // Cela signifie: avancer de sizeof(type_pointé) octets.
+    int *nextAddress = ptr + 1; 
+    // Si ptr = 0x7ffc12345678, alors nextAddress = 0x7ffc1234567C (adresse + 4 octets).
+    // ATTENTION: 'nextAddress' pointe maintenant vers une zone mémoire APRES 'value'.
+    //           Ce qu'elle contient est indéfini ici.
+    //           L'arithmétique est surtout utile avec les tableaux.
+
+    // Exemple avec tableau:
+    int numbers[3] = {10, 20, 30};
+    int *pNumbers = numbers; // ou &numbers[0]
+    // pNumbers pointe sur 10
+
+    printf("Valeur: %d\n", *pNumbers); // Affiche 10
+    
+    pNumbers++; // Avance le pointeur à l'élément suivant (adresse + sizeof(int))
+    printf("Valeur: %d\n", *pNumbers); // Affiche 20
+
+    // 4. Relation Tableau/Pointeur
+    // array[i] est équivalent à *(array + i)
+    printf("Troisième élément: %d\n", numbers[2]);     // Affiche 30
+    printf("Troisième élément: %d\n", *(numbers + 2)); // Affiche 30
+
+    return 0;
+}</code></pre></div>
+
+        <h5 class="text-lg font-semibold mt-4 mb-2">Visualisation Mémoire (Conceptuelle)</h5>
+        <p class="mb-2">Imaginez la mémoire comme une série de cases numérotées (adresses). Quand on exécute le code ci-dessus (simplifié) :</p>
+        <pre class="text-sm bg-gray-800 p-2 rounded">Adresse       | Contenu      | Variable / Pointeur
+--------------|--------------|----------------------
+...           | ...          |
+0x7ffc12345670| ??           |
+0x7ffc12345674| 10           | numbers[0]
+0x7ffc12345678| 50           | value  (&value = 0x7ffc12345678)
+0x7ffc1234567C| 20           | numbers[1]
+0x7ffc12345680| 30           | numbers[2]
+0x7ffc12345684| 100          | anotherValue
+...           | ...          |
+0x7ffcABCDE000| 0x7ffc12345678 | ptr (contient l'adresse de 'value')
+0x7ffcABCDE008| 0x7ffc1234567C | pNumbers (après pNumbers++, pointe sur numbers[1])
+...           | ...          |</pre>
+        <p class="mt-2 italic text-sm">Comprendre cette distinction entre l'adresse (contenu du pointeur) et la valeur à cette adresse (résultat du déréférencement `*`) est fondamental.</p>
+        <p class="mt-2 italic text-sm">Une visualisation interactive permettant de manipuler ces adresses et valeurs sera ajoutée ultérieurement.</p>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Structures et Unions</h3>
+    <div class="grid md:grid-cols-2 gap-6">
+        <div>
+            <h4 class="text-xl font-semibold mb-3">Structures</h4>
+            <div class="code-block">
+                <pre><code class="language-c">struct Personne {
+    char nom[50];
+    int age;
+    float taille;
+};
+
+struct Personne p1 = {"Alice", 25, 1.68};</code></pre>
+            </div>
+            <p class="mt-2">Les structures allouent de l'espace mémoire pour chaque membre séquentiellement (avec potentiellement du padding).</p>
+        </div>
+        <div>
+            <h4 class="text-xl font-semibold mb-3">Unions</h4>
+            <div class="code-block">
+                <pre><code class="language-c">union Data {
+    int i;
+    float f;
+    char str[20];
+};
+
+union Data data;
+data.i = 10;    // Utilise le membre i
+data.f = 3.14;  // Écrase le membre i</code></pre>
+            </div>
+            <p class="mt-2">Les unions partagent le même espace mémoire pour tous leurs membres, seul un membre peut être utilisé à la fois.</p>
+        </div>
+    </div>
+
+    <!-- Remplacement pour TODO 2: Exemples : Structures de Données Complexes -->
+    <div class="concept-card">
+        <h4 class="text-xl font-semibold mb-3">Exemples : Structures de Données Complexes en C</h4>
+        <p class="mb-4">En reverse engineering, vous rencontrerez souvent des structures de données plus élaborées. Comprendre leur agencement en mémoire est clé.</p>
+        
+        <h5 class="text-lg font-semibold mt-4 mb-2">Liste Chaînée Simple :</h5>
+        <div class="code-block"><pre><code class="language-c">#include &lt;stdlib.h&gt; // Pour malloc
+
+struct Node {
+    int data;           // Donnée (ex: 4 bytes)
+    struct Node *next;  // Pointeur vers le prochain nœud (ex: 4 ou 8 bytes selon l'archi)
+};
+
+int main() {
+    struct Node *head = NULL;
+    struct Node *second = NULL;
+    struct Node *third = NULL;
+
+    head = (struct Node*)malloc(sizeof(struct Node));
+    second = (struct Node*)malloc(sizeof(struct Node));
+    third = (struct Node*)malloc(sizeof(struct Node));
+
+    head->data = 1;      // Assigne 1 à la donnée du premier nœud
+    head->next = second; // Fait pointer le premier vers le second
+
+    second->data = 2;
+    second->next = third;
+
+    third->data = 3;
+    third->next = NULL;  // Fin de la liste
+
+    // ... utiliser la liste ...
+
+    free(third); free(second); free(head); // Ne pas oublier de libérer la mémoire !
+    return 0;
+}
+</code></pre></div>
+        <p class="mt-2 mb-4"><strong>Représentation Mémoire (Simplifiée) :</strong> Chaque nœud est un bloc mémoire alloué (souvent sur le tas via `malloc`). Ce bloc contient la `data` suivie du pointeur `next`. Le pointeur `next` contient l'adresse mémoire du bloc du nœud suivant, formant ainsi une chaîne. L'ordre en mémoire physique n'est pas garanti (les blocs peuvent être dispersés).</p>
+
+        <h5 class="text-lg font-semibold mt-4 mb-2">Structure Imbriquée et Padding :</h5>
+         <div class="code-block"><pre><code class="language-c">struct Point {
+    char label; // 1 byte
+    // Potentiellement 3 bytes de padding ici sur archi 32/64 bits
+    int x;      // 4 bytes
+    int y;      // 4 bytes
+}; // Taille totale probable: 1 + 3 + 4 + 4 = 12 bytes
+
+struct Rectangle {
+    struct Point topLeft;     // 12 bytes (taille de Point)
+    struct Point bottomRight; // 12 bytes
+    int color;                // 4 bytes
+    // Potentiellement du padding à la fin si nécessaire pour aligner un tableau de Rectangles
+}; // Taille totale probable: 12 + 12 + 4 = 28 bytes (pourrait être 32 avec padding final)
+</code></pre></div>
+        <p class="mt-2"><strong>Points Clés :</strong></p>
+        <ul class="list-disc pl-5 space-y-1">
+            <li><strong>Alignement :</strong> Le compilateur ajoute souvent du "padding" (octets vides) pour que les membres de la structure commencent à des adresses mémoire alignées (multiples de 4 ou 8 par exemple), ce qui optimise l'accès CPU. Le `char label` est suivi de 3 octets de padding pour que `int x` commence à une adresse multiple de 4.</li>
+            <li><strong>Taille :</strong> La taille totale d'une structure (`sizeof`) inclut le padding éventuel.</li>
+            <li><strong>Imbrication :</strong> Les structures imbriquées sont simplement incluses séquentiellement en mémoire.</li>
+        </ul>
+        <p class="mt-2">En reverse, identifier ces patterns d'accès mémoire (offsets fixes pour les membres, calculs d'adresse pour les pointeurs `next`) aide à reconstruire les structures de données utilisées.</p>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Fonctions et Pile d'Appels</h3>
+    <div class="concept-card">
+        <h4 class="text-xl font-semibold mb-3">Mécanisme d'appel de fonction</h4>
+        <ol class="list-decimal pl-5 space-y-2">
+            <li>Empiler les arguments (de droite à gauche en x86)</li>
+            <li>Sauvegarder l'adresse de retour (push EIP/RIP)</li>
+            <li>Sauter à l'adresse de la fonction</li>
+            <li>La fonction configure son "frame" (EBP/RBP)</li>
+            <li>Exécution du corps de la fonction</li>
+            <li>Nettoyage et restauration du contexte</li>
+            <li>Retour à l'adresse sauvegardée</li>
+        </ol>
+    </div>
+
+    <div class="diagram-container mt-4">
+        <h4 class="text-xl font-semibold mb-3 text-center">Structure de la pile pendant un appel de fonction</h4>
+        <div class="flex flex-col items-center">
+            <div class="diagram-box w-64">Adresses hautes</div>
+            <div class="diagram-box w-64">Arguments de la fonction</div>
+            <div class="diagram-box w-64">Adresse de retour</div>
+            <div class="diagram-box w-64">EBP sauvegardé</div>
+            <div class="diagram-box w-64">Variables locales</div>
+            <div class="diagram-box w-64">Adresses basses</div>
+        </div>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Contrôle de flux en C</h3>
+    <div class="grid md:grid-cols-2 gap-6">
+        <div>
+            <h4 class="text-xl font-semibold mb-3">Structures conditionnelles</h4>
+            <div class="code-block">
+                <pre><code class="language-c">// Structure if-else
+if (condition) {
+    // Code exécuté si condition est vraie
+} else {
+    // Code exécuté si condition est fausse
+}
+
+// Switch-case
+switch (variable) {
+    case 1:
+        // Code pour case 1
+        break;
+    case 2:
+        // Code pour case 2
+        break;
+    default:
+        // Code par défaut
+}</code></pre>
+            </div>
+        </div>
+        <div>
+            <h4 class="text-xl font-semibold mb-3">Boucles</h4>
+            <div class="code-block">
+                <pre><code class="language-c">// Boucle for
+for (int i = 0; i < 10; i++) {
+    // Code exécuté 10 fois
+}
+
+// Boucle while
+while (condition) {
+    // Code exécuté tant que condition est vraie
+}
+
+// Boucle do-while
+do {
+    // Code exécuté au moins une fois
+} while (condition);</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remplacement pour TODO 3: Compilation avec GCC/Clang -->
+    <div class="concept-card">
+        <h4 class="text-xl font-semibold mb-3">Compilation avec GCC/Clang</h4>
+        <p class="mb-4">Comprendre comment le code C est transformé en exécutable est utile. Le processus typique (simplifié) avec GCC ou Clang est :</p>
+        <ol class="list-decimal pl-5 space-y-2 mb-4">
+            <li><strong>Préprocesseur :</strong> Traite les directives commençant par `#` (`#include`, `#define`). Inclut les fichiers header, remplace les macros. Output : Code C "pur". (`gcc -E code.c`)</li>
+            <li><strong>Compilateur :</strong> Traduit le code C en code assembleur spécifique à l'architecture cible. C'est ici que les optimisations ont lieu. Output : Fichier `.s`. (`gcc -S code.c`)</li>
+            <li><strong>Assembleur :</strong> Convertit le code assembleur en code machine (instructions binaires) et crée un fichier objet (`.o`) contenant ce code, les données, et des informations pour l'édition de liens (table des symboles, informations de relocalisation). (`gcc -c code.s`)</li>
+            <li><strong>Éditeur de Liens (Linker) :</strong> Combine un ou plusieurs fichiers objets avec les bibliothèques nécessaires (statiques ou dynamiques) pour résoudre les références entre fichiers (appels de fonctions, variables globales) et créer l'exécutable final. Output : Exécutable (ex: `a.out`). (`gcc code.o -o executable`)</li>
+        </ol>
+
+        <h5 class="text-lg font-semibold mt-4 mb-2">Options Utiles pour le Debug et le Reverse :</h5>
+        <p>Lors de la compilation de code pour l'analyser (ou lors de la création de cibles pour CTF), certaines options sont très utiles :</p>
+        <div class="table-container">
+            <div class="custom-table">
+                <table>
+                    <thead><tr><th>Option</th><th>Description</th><th>Usage</th></tr></thead>
+                    <tbody>
+                        <tr><td>`-g`</td><td>Inclut les informations de débogage (noms de fonctions/variables, numéros de lignes).</td><td>Essentiel pour GDB. Facilite grandement l'analyse initiale dans Ghidra/IDA.</td></tr>
+                        <tr><td>`-O0`</td><td>Désactive les optimisations.</td><td>Le code assembleur généré est plus proche et plus fidèle au code C original, rendant l'analyse plus facile.</td></tr>
+                        <tr><td>`-m32`</td><td>Compile en mode 32 bits (sur un système 64 bits).</td><td>Utile pour pratiquer sur des binaires 32 bits ou étudier des exploits spécifiques.</td></tr>
+                        <tr><td>`-fno-stack-protector`</td><td>Désactive la protection contre les débordements de pile (stack canaries).</td><td>Simplifie l'étude et l'exploitation des buffer overflows sur la pile. <strong>Ne pas utiliser en production !</strong></td></tr>
+                        <tr><td>`-z execstack`</td><td>Rend la pile exécutable.</td><td>Permet l'exécution de shellcode injecté sur la pile. <strong>Ne pas utiliser en production !</strong></td></tr>
+                         <tr><td>`-no-pie` (GCC) / `-fno-pie` (Clang)</td><td>Désactive le code indépendant de la position (Position Independent Executable).</td><td>L'adresse de base du programme est fixe, simplifiant le débogage et l'analyse d'adresses.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="code-block mt-4"><pre><code class="language-bash"># Exemple de compilation pour analyse/debug facile (Linux 32-bit)
+gcc -m32 -g -O0 -fno-stack-protector -z execstack -no-pie programme.c -o programme_debug
+</code></pre></div>
+    </div>
+
+</section> 

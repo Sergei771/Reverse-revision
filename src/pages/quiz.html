@@ -1,0 +1,39 @@
+<section id="quiz-content" class="content-section">
+    <h2 class="text-3xl font-bold mb-6 gradient-text">Quiz Interactif</h2>
+    
+    <div class="concept-card">
+        <h3 class="text-xl font-semibold mb-3">Testez vos connaissances</h3>
+        <p>Répondez aux questions suivantes pour évaluer votre compréhension des concepts clés. Les questions sont tirées aléatoirement de la banque de données. Certaines peuvent avoir plusieurs réponses correctes.</p>
+        <div id="quiz-timer" class="mt-4 text-lg font-semibold">Temps restant : <span id="timer-display">--:--</span></div>
+    </div>
+
+    <div class="progress-container my-4">
+         <span id="quiz-count" class="text-sm font-medium text-purple-300">0</span><span class="text-sm font-medium text-gray-400">/<span id="quiz-total">?</span></span>
+        <div class="w-full bg-gray-700 rounded-full h-2.5 mt-1">
+            <div id="quiz-progress" class="bg-purple-600 h-2.5 rounded-full transition-all duration-300 ease-out" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <div id="quiz-container" class="quiz-container">
+        <!-- Quiz questions will be loaded here by JavaScript -->
+        <div class="quiz-question-placeholder"><p>Chargement des questions...</p></div>
+        
+        <!-- Zone pour afficher le feedback (explication) -->
+        <div id="quiz-feedback" class="mt-4 p-4 bg-gray-800 border-l-4 border-purple-600 rounded" style="display: none;">
+            <!-- Feedback content will be injected here by JS -->
+        </div>
+
+        <div class="mt-6 flex justify-end space-x-4"> <!-- Align buttons to the right -->
+            <button id="check-answer" class="custom-button">Vérifier</button>
+            <button id="next-question-btn" class="btn btn-primary">
+                Suivant <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+
+        <div id="quiz-result" class="mt-8 p-6 bg-gray-800 rounded-lg text-center" style="display: none;">
+            <!-- Final score content will be injected here by JS -->
+            <p>Chargement des résultats...</p> 
+            <button id="restart-quiz" class="custom-button mt-6">Recommencer le Quiz</button>
+        </div>
+    </div>
+</section> 

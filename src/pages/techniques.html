@@ -1,0 +1,483 @@
+<section id="techniques-content" class="content-section">
+    <h2 class="text-3xl font-bold mb-6 gradient-text">Techniques de Rétro-conception</h2>
+    
+    <div class="concept-card">
+        <h3 class="text-xl font-semibold mb-3">Approches méthodologiques</h3>
+        <p>La rétro-conception électronique demande une approche structurée pour naviguer dans la complexité des systèmes analysés. Les techniques ci-dessous vous permettront d'aborder efficacement l'analyse d'un binaire.</p>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Analyse Statique</h3>
+    <p class="mb-4">L'analyse statique consiste à examiner le code sans l'exécuter. Elle permet de comprendre la structure et le comportement potentiel du programme.</p>
+
+    <div class="grid md:grid-cols-2 gap-6">
+        <div class="content-section">
+            <h4 class="text-xl font-semibold mb-3"><i class="fas fa-search text-purple-400 mr-2"></i>Techniques d'analyse statique</h4>
+            <ol class="list-decimal pl-5 space-y-2">
+                <li><strong>Identification des chaînes</strong> - Localiser les messages, URLs, noms de fichiers</li>
+                <li><strong>Analyse des imports/exports</strong> - Déterminer les bibliothèques et fonctions utilisées</li>
+                <li><strong>Désassemblage</strong> - Convertir le code machine en assembleur</li>
+                <li><strong>Décompilation</strong> - Générer un pseudo-code de haut niveau</li>
+                <li><strong>Analyse du graphe de flux</strong> - Identifier les structures de contrôle</li>
+                <li><strong>Reconnaissance de patterns</strong> - Identifier des algorithmes connus</li>
+            </ol>
+        </div>
+        <div class="content-section">
+            <h4 class="text-xl font-semibold mb-3"><i class="fas fa-tools text-purple-400 mr-2"></i>Outils d'analyse statique</h4>
+            <ul class="list-disc pl-5 space-y-2">
+                <li><strong>strings</strong> - Extraire les chaînes de caractères
+                    <div class="code-block mt-2">
+                        <pre><code class="language-bash">strings -a executable</code></pre>
+                    </div>
+                </li>
+                <li><strong>objdump</strong> - Désassembler les sections
+                    <div class="code-block mt-2">
+                        <pre><code class="language-bash">objdump -d executable</code></pre>
+                    </div>
+                </li>
+                <li><strong>Ghidra/IDA</strong> - Analyse avancée, décompilation</li>
+            </ul>
+        </div>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Analyse Dynamique</h3>
+    <p class="mb-4">L'analyse dynamique implique l'exécution du programme pour observer son comportement réel. Elle complète l'analyse statique en révélant des comportements qui pourraient être difficiles à détecter statiquement.</p>
+
+    <div class="grid md:grid-cols-2 gap-6">
+        <div class="content-section">
+            <h4 class="text-xl font-semibold mb-3"><i class="fas fa-play-circle text-purple-400 mr-2"></i>Techniques d'analyse dynamique</h4>
+            <ol class="list-decimal pl-5 space-y-2">
+                <li><strong>Traçage d'exécution</strong> - Suivre le flux d'instructions</li>
+                <li><strong>Breakpoints</strong> - Arrêter l'exécution à des points spécifiques</li>
+                <li><strong>Memory dumps</strong> - Examiner la mémoire à des moments clés</li>
+                <li><strong>API hooking</strong> - Intercepter les appels aux fonctions</li>
+                <li><strong>Tracing réseau</strong> - Capturer les communications</li>
+                <li><strong>Manipulation d'état</strong> - Modifier les variables pour tester le comportement</li>
+            </ol>
+        </div>
+        <div class="content-section">
+            <h4 class="text-xl font-semibold mb-3"><i class="fas fa-bug text-purple-400 mr-2"></i>Outils d'analyse dynamique</h4>
+            <ul class="list-disc pl-5 space-y-2">
+                <li><strong>GDB/WinDbg</strong> - Débogage et analyse mémoire
+                    <div class="code-block mt-2">
+                        <pre><code class="language-bash">gdb -q ./executable
+(gdb) break main
+(gdb) run
+(gdb) info registers</code></pre>
+                    </div>
+                </li>
+                <li><strong>ltrace/strace</strong> - Tracer les appels de bibliothèques/système
+                    <div class="code-block mt-2">
+                        <pre><code class="language-bash">strace ./executable</code></pre>
+                    </div>
+                </li>
+                <li><strong>Wireshark</strong> - Capture et analyse du trafic réseau</li>
+            </ul>
+        </div>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Reconnaissance des structures en C</h3>
+    <p class="mb-4">Identifier les structures de contrôle et de données est essentiel pour comprendre la logique d'un programme désassemblé.</p>
+
+    <div class="grid md:grid-cols-2 gap-6">
+        <div>
+            <h4 class="text-xl font-semibold mb-3">Structures conditionnelles</h4>
+            <div class="concept-card">
+                <p class="mb-2"><strong>if-else en assembleur</strong> se traduit par des instructions de comparaison suivies de sauts conditionnels :</p>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <h5 class="font-semibold">Code C</h5>
+                        <div class="code-block">
+                            <pre><code class="language-c">if (a > b) {
+    x = 1;
+} else {
+    x = 2;
+}</code></pre>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold">Désassemblage</h5>
+                        <div class="code-block">
+                            <pre><code class="language-asm">  mov eax, [a]
+  cmp eax, [b]
+  jle else_branch
+  mov [x], 1
+  jmp end_if
+else_branch:
+  mov [x], 2
+end_if:</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="concept-card mt-4">
+                <h5 class="text-lg font-semibold mb-2">Identification Avancée : Conditions</h5>
+                <p class="mb-2">Pour des structures plus complexes :</p>
+                <ul class="list-disc pl-5 space-y-3">
+                    <li>
+                        <strong>Switch-Case (Jump Table) :</strong> Souvent implémenté avec une "jump table". Une valeur initiale est utilisée comme index dans un tableau d'adresses (la table). Le code saute ensuite à l'adresse récupérée. Recherchez des accès mémoire indexés suivis d'un saut indirect (`jmp eax`, `jmp [base + index*size]`).
+                        <div class="code-block mt-1"><pre><code class="language-asm">; Code C: switch(value) { case 0: ...; case 1: ...; }
+  mov eax, [value]
+  cmp eax, max_case_value ; Vérif boundary
+  ja default_case
+  jmp [jump_table + eax*4] ; Saut indirect via la table
+
+jump_table:
+  dd case_0_addr
+  dd case_1_addr
+  ...
+case_0_addr:
+  ; code pour case 0
+  jmp end_switch
+case_1_addr:
+  ; code pour case 1
+  jmp end_switch
+default_case:
+  ; code pour default
+end_switch:</code></pre></div>
+                    </li>
+                    <li>
+                        <strong>Conditions Imbriquées (Nested) :</strong> Se traduisent par des séquences de `CMP`/`TEST` et `Jcc` imbriquées. Suivez le flux des sauts pour reconstruire la logique. Les niveaux d'indentation dans votre analyse aident à visualiser l'imbrication.
+                        <div class="code-block mt-1"><pre><code class="language-asm">; Code C: if (a > 5) { if (b == 0) { ... } }
+  cmp [a], 5
+  jle outer_end   ; Condition externe
+  cmp [b], 0
+  jne inner_end   ; Condition interne
+  ; ... code imbriqué ...
+inner_end:
+outer_end:</code></pre></div>
+                    </li>
+                    <li>
+                        <strong>Utilisation des Flags :</strong> Après `CMP a, b`, les flags indiquent la relation :
+                        <ul class="list-disc pl-5 mt-1 text-sm">
+                            <li>`JE`/`JZ` (Equal/Zero): saute si `a == b` (ZF=1)</li>
+                            <li>`JNE`/`JNZ` (Not Equal/Not Zero): saute si `a != b` (ZF=0)</li>
+                            <li>`JG`/`JNLE` (Signed Greater): saute si `a > b` (ZF=0 et SF=OF)</li>
+                            <li>`JGE`/`JNL` (Signed Greater or Equal): saute si `a >= b` (SF=OF)</li>
+                            <li>`JL`/`JNGE` (Signed Less): saute si `a < b` (SF!=OF)</li>
+                            <li>`JLE`/`JNG` (Signed Less or Equal): saute si `a <= b` (ZF=1 ou SF!=OF)</li>
+                            <li>`JA`/`JNBE` (Unsigned Above): saute si `a > b` (CF=0 et ZF=0)</li>
+                            <li>`JAE`/`JNB` (Unsigned Above or Equal): saute si `a >= b` (CF=0)</li>
+                            <li>`JB`/`JNAE` (Unsigned Below): saute si `a < b` (CF=1)</li>
+                            <li>`JBE`/`JNA` (Unsigned Below or Equal): saute si `a <= b` (CF=1 ou ZF=1)</li>
+                        </ul>
+                        Après `TEST reg, mask`, `JZ` saute si tous les bits testés sont 0, `JNZ` saute si au moins un bit testé est 1.
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div>
+            <h4 class="text-xl font-semibold mb-3">Boucles</h4>
+            <div class="concept-card">
+                <p class="mb-2"><strong>while/for en assembleur</strong> utilise des comparaisons et des sauts pour créer des boucles :</p>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <h5 class="font-semibold">Code C</h5>
+                        <div class="code-block">
+                            <pre><code class="language-c">for (i = 0; i < 10; i++) {
+    sum += i;
+}</code></pre>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold">Désassemblage</h5>
+                        <div class="code-block">
+                            <pre><code class="language-asm">  mov [i], 0
+loop_start:
+  mov eax, [i]
+  cmp eax, 10
+  jge loop_end
+  add [sum], eax
+  inc dword [i]
+  jmp loop_start
+loop_end:</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="concept-card mt-4">
+                <h5 class="text-lg font-semibold mb-2">Identification Avancée : Boucles</h5>
+                 <p class="mb-2">Différents types de boucles ont des structures typiques :</p>
+                 <ul class="list-disc pl-5 space-y-3">
+                    <li>
+                        <strong>Boucle `while (condition)` :</strong> La condition est testée *avant* le corps de la boucle.
+                        <div class="code-block mt-1"><pre><code class="language-asm">loop_check:
+  ; ... calcule/vérifie la condition ...
+  cmp condition_result, 0 ; ou test
+  je loop_end             ; Saute si la condition est fausse
+  ; ... corps de la boucle ...
+  jmp loop_check          ; Retourne vérifier la condition
+loop_end:</code></pre></div>
+                    </li>
+                    <li>
+                        <strong>Boucle `do { ... } while (condition)` :</strong> Le corps est exécuté au moins une fois, la condition est testée *après*.
+                        <div class="code-block mt-1"><pre><code class="language-asm">loop_start:
+  ; ... corps de la boucle ...
+  ; ... calcule/vérifie la condition ...
+  cmp condition_result, 0 ; ou test
+  jne loop_start          ; Continue si la condition est vraie
+; loop_end: (la sortie se fait par le non-saut)</code></pre></div>
+                    </li>
+                    <li>
+                        <strong>Boucle `for` complexe :</strong> Peut inclure plusieurs initialisations, conditions ou incrémentations. Recherchez les blocs d'initialisation avant la boucle, la vérification de condition au début (ou parfois à la fin), et les opérations d'incrémentation/modification à la fin du corps de la boucle avant le saut de retour.
+                        <div class="code-block mt-1"><pre><code class="language-asm">; Code C: for (i=0, j=10; i < j; i++, j--) { ... }
+  mov [i], 0
+  mov [j], 10
+loop_check:
+  mov eax, [i]
+  cmp eax, [j]
+  jge loop_end    ; Condition i < j
+  ; ... corps de la boucle ...
+  inc dword [i]   ; i++
+  dec dword [j]   ; j--
+  jmp loop_check
+loop_end:</code></pre></div>
+                    </li>
+                 </ul>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="text-xl font-semibold mt-6 mb-3">Structures de données</h4>
+    <div class="concept-card">
+        <p>La reconnaissance des structures de données est plus complexe mais peut être facilitée par l'observation des patterns d'accès :</p>
+        
+        <div class="grid md:grid-cols-2 gap-4 mt-4">
+            <div>
+                <h5 class="text-lg font-semibold mb-2">Tableaux</h5>
+                <p>Identifiables par des accès mémoire avec des offsets calculés :</p>
+                <div class="code-block">
+                    <pre><code class="language-asm">  ; Accès à array[i]
+  mov eax, [i]
+  mov ebx, 4        ; sizeof(int)
+  mul ebx           ; eax = i * 4
+  add eax, array    ; eax = &array[i]
+  mov edx, [eax]    ; edx = array[i]</code></pre>
+                </div>
+            </div>
+            <div>
+                <h5 class="text-lg font-semibold mb-2">Structures</h5>
+                <p>Reconnaissables par des accès à des offsets fixes :</p>
+                <div class="code-block">
+                    <pre><code class="language-asm">  ; Accès à person.age
+  mov eax, [person]
+  mov ebx, [eax+8]  ; Offset 8 = age
+  
+  ; Accès à person.name
+  mov eax, [person]
+  lea ecx, [eax]    ; Offset 0 = name</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remplacement de la section Exercices -->
+    <div class="concept-card mt-6">
+        <h4 class="text-xl font-semibold mb-3">Exercices : Reconnaissance de Patterns</h4>
+        <p class="mb-4">Testez votre compréhension ! Analysez les extraits de code assembleur suivants et identifiez la structure ou l'opération C correspondante.</p>
+        
+        <div class="exercise-block border-t pt-4 mt-4">
+            <h5 class="font-semibold mb-2">Exercice 1 : Condition Simple</h5>
+            <p class="text-sm mb-2 italic">Quelle structure conditionnelle C reconnaissez-vous ici ?</p>
+            <div class="code-block"><pre><code class="language-asm">; Exercice 1
+  mov eax, [input_var]
+  cmp eax, 100
+  jge case_greater_equal
+  ; Code si input_var < 100
+  mov [result], 0
+  jmp end_condition
+case_greater_equal:
+  ; Code si input_var >= 100
+  mov [result], 1
+end_condition:
+  ; Suite du code</code></pre></div>
+            <!-- Solution/Indice (peut être masqué/affiché avec JS plus tard) -->
+            <!-- <p class="text-sm mt-2">Indice: Comparez input_var à 100 et sautez si supérieur ou égal.</p> -->
+        </div>
+
+        <div class="exercise-block border-t pt-4 mt-4">
+            <h5 class="font-semibold mb-2">Exercice 2 : Boucle Simple</h5>
+            <p class="text-sm mb-2 italic">Quelle structure de boucle C ce code implémente-t-il le plus probablement ?</p>
+            <div class="code-block"><pre><code class="language-asm">; Exercice 2
+  mov ecx, 0       ; Initialisation compteur
+loop_start:
+  cmp ecx, 10    ; Condition de boucle
+  jge loop_end
+  ; ... Corps de la boucle ...
+  ; (Le code ici utilise ecx)
+  inc ecx        ; Incrémentation
+  jmp loop_start
+loop_end:
+  ; Suite du code</code></pre></div>
+            <!-- <p class="text-sm mt-2">Indice: Initialisation, condition avant le corps, incrémentation à la fin.</p> -->
+        </div>
+
+        <div class="exercise-block border-t pt-4 mt-4">
+            <h5 class="font-semibold mb-2">Exercice 3 : Accès Tableau</h5>
+            <p class="text-sm mb-2 italic">À quel type d'accès mémoire C ce pattern correspond-il ? (Indices : `shl eax, 2` équivaut à `* 4`, taille d'un `int` 32 bits)</p>
+            <div class="code-block"><pre><code class="language-asm">; Exercice 3
+; Supposons: my_array à l'adresse 0x4000 (contient des int 32 bits)
+  mov esi, [index]   ; Lire l'index (ex: 5)
+  mov eax, esi
+  shl eax, 2       ; eax = index * 4 
+  mov ebx, 0x4000  ; Adresse de base du tableau
+  add eax, ebx     ; eax = adresse de l'élément (0x4000 + 5*4 = 0x4014)
+  mov ecx, [eax]   ; Lire la valeur à l'adresse calculée</code></pre></div>
+            <!-- <p class="text-sm mt-2">Indice: Calcule une adresse en utilisant un index et une taille d'élément.</p> -->
+        </div>
+
+        <div class="exercise-block border-t pt-4 mt-4">
+            <h5 class="font-semibold mb-2">Exercice 4 : Accès Structure</h5>
+            <p class="text-sm mb-2 italic">Quel type d'accès à une structure C est illustré ci-dessous ?</p>
+            <div class="code-block"><pre><code class="language-asm">; Exercice 4
+; Supposons: ptr_struct contient l'adresse d'une structure
+  mov edi, [ptr_struct]  ; edi = pointeur (adresse) de la structure
+  
+  ; Accès via offsets constants depuis le pointeur
+  mov eax, [edi + 0]     ; Lire le champ à l'offset 0
+  mov ebx, [edi + 4]     ; Lire le champ à l'offset 4
+  mov ecx, [edi + 8]     ; Lire le champ à l'offset 8</code></pre></div>
+            <!-- <p class="text-sm mt-2">Indice: Accès à des données via des décalages fixes depuis une adresse de base.</p> -->
+        </div>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Techniques avancées</h3>
+    <div class="grid md:grid-cols-3 gap-4">
+        <div class="content-section">
+            <h4 class="text-xl font-semibold mb-3"><i class="fas fa-shield-alt text-purple-400 mr-2"></i>Analyse de protections</h4>
+            <ul class="list-disc pl-5 space-y-1">
+                <li><strong>Packers/crypters</strong> - Détecter la compression ou le chiffrement</li>
+                <li><strong>Anti-debug</strong> - Repérer les techniques anti-analyse</li>
+                <li><strong>Obfuscation</strong> - Identifier le code obscurci</li>
+                <li><strong>VM protections</strong> - Reconnaître les VM personnalisées</li>
+            </ul>
+        </div>
+        <div class="content-section">
+            <h4 class="text-xl font-semibold mb-3"><i class="fas fa-puzzle-piece text-purple-400 mr-2"></i>Reconstruction d'algorithmes</h4>
+            <ul class="list-disc pl-5 space-y-1">
+                <li><strong>Cryptographie</strong> - Identifier les algorithmes standard</li>
+                <li><strong>Compression</strong> - Repérer les algorithmes de compression</li>
+                <li><strong>Hachage</strong> - Reconnaître les fonctions de hachage</li>
+                <li><strong>Encodage</strong> - Identifier les schémas d'encodage</li>
+            </ul>
+        </div>
+        <div class="content-section">
+            <h4 class="text-xl font-semibold mb-3"><i class="fas fa-file-signature text-purple-400 mr-2"></i>Documentation</h4>
+            <ul class="list-disc pl-5 space-y-1">
+                <li><strong>Nommage significatif</strong> - Renommer variables et fonctions</li>
+                <li><strong>Commentaires</strong> - Documenter le code désassemblé</li>
+                <li><strong>Graphes</strong> - Créer des diagrammes de flux</li>
+                <li><strong>Reconstruction du code</strong> - Réécrire en langage de haut niveau</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Remplacement du Guide Pas à Pas -->
+    <div class="concept-card mt-6">
+        <h3 class="text-2xl font-semibold mb-4">Guide Pas à Pas : Rétro-conception d'un Algorithme Simple</h3>
+        <p class="mb-4">Voyons comment appliquer ces techniques pour comprendre une fonction inconnue. Prenons l'exemple d'une fonction C compilée dont nous avons le désassemblage suivant (syntaxe Intel x86 simplifiée) :</p>
+        
+        <div class="code-block mb-4"><pre><code class="language-c">// Fonction C originale (inconnue au début)
+int simple_hash(char *input) {
+    int hash = 0;
+    int i = 0;
+    while (input[i] != '\0') {
+        hash = (hash * 31) + input[i];
+        i++;
+    }
+    return hash;
+}</code></pre></div>
+        
+        <div class="code-block mb-4"><pre><code class="language-asm">; Désassemblage de la fonction 'simple_hash'
+simple_hash:
+    push ebp
+    mov ebp, esp
+    sub esp, 4          ; Alloue espace pour variable locale
+    mov dword [ebp-4], 0  ; Initialise la variable locale (hash?) à 0
+    
+    mov eax, [ebp+8]    ; Récupère l'argument 1 (pointeur 'input'?)
+    mov ecx, 0          ; Initialise un compteur (index 'i'?) à 0
+    
+loop_start:             ; Étiquette de début de boucle
+    movzx edx, byte [eax+ecx] ; Lire un caractère depuis input[i]
+    test dl, dl         ; Teste si le caractère est null (fin de chaîne?)
+    jz loop_end         ; Si null, saute à la fin de la boucle
+    
+    ; Corps de la boucle
+    mov ebx, [ebp-4]    ; Charge la variable locale (hash courant)
+    imul ebx, ebx, 31   ; Multiplie par 31
+    add ebx, edx        ; Ajoute le caractère lu (ASCII value)
+    mov [ebp-4], ebx    ; Met à jour la variable locale (nouveau hash)
+    
+    inc ecx             ; Incrémente le compteur (i++)
+    jmp loop_start      ; Retourne au début de la boucle
+    
+loop_end:               ; Étiquette de fin de boucle
+    mov eax, [ebp-4]    ; Place la variable locale (hash final) dans EAX (valeur de retour)
+    leave               ; Restaure EBP et ESP
+    ret                 ; Retourne de la fonction</code></pre></div>
+
+        <h4 class="text-xl font-semibold mb-3 mt-6">Étapes de l'analyse :</h4>
+        <ol class="list-decimal pl-5 space-y-3">
+            <li>
+                <strong>Analyse statique initiale :</strong>
+                <ul class="list-disc pl-5 text-sm">
+                    <li>Nom de la fonction : `simple_hash` (suggère un calcul de hachage).</li>
+                    <li>Arguments : Prend un argument passé sur la pile `[ebp+8]`, probablement un pointeur (utilisé comme adresse de base pour lire des octets).</li>
+                    <li>Variables locales : Une variable locale `[ebp-4]` (DWORD - 4 octets) est allouée et initialisée à 0.</li>
+                    <li>Valeur de retour : La valeur finale de la variable locale est placée dans `EAX` avant `ret`.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Identification de la fonction clé :</strong> La fonction entière est notre cible ici. On observe un prologue (`push ebp`, `mov ebp, esp`), une allocation locale (`sub esp, 4`), un épilogue (`leave`, `ret`), et un corps de fonction entre les deux.
+            </li>
+             <li>
+                <strong>Analyse du désassemblage :</strong>
+                <ul class="list-disc pl-5 text-sm">
+                    <li>Initialisation : `[ebp-4]` (hash) mis à 0, `ecx` (index `i`) mis à 0. `eax` contient le pointeur d'entrée.</li>
+                    <li>Lecture de caractère : `movzx edx, byte [eax+ecx]` lit un octet (caractère) à l'adresse `input + i`. `movzx` étend à 32 bits avec des zéros.</li>
+                    <li>Condition de fin : `test dl, dl` suivi de `jz loop_end` vérifie si le caractère lu est le terminateur null (`\0`).</li>
+                    <li>Calcul : `imul ebx, ebx, 31` et `add ebx, edx` effectuent le calcul `hash = hash * 31 + character`.</li>
+                    <li>Mise à jour : `mov [ebp-4], ebx` sauvegarde le nouveau hash. `inc ecx` avance l'index.</li>
+                    <li>Boucle : `jmp loop_start` continue la boucle.</li>
+                    <li>Retour : `mov eax, [ebp-4]` prépare la valeur de retour.</li>
+                </ul>
+            </li>
+             <li>
+                <strong>Identification des boucles et conditions :</strong>
+                <ul class="list-disc pl-5 text-sm">
+                    <li>Une boucle `while`-like est clairement visible avec `loop_start`, `loop_end`, la condition `test dl, dl / jz loop_end` (vérifiée avant le corps principal pour chaque itération sauf potentiellement la première dans certaines optimisations), et le `jmp loop_start` à la fin.</li>
+                    <li>La condition est `input[i] != '\0'`.</li>
+                </ul>
+            </li>
+             <li>
+                <strong>Reconnaissance des opérations clés :</strong>
+                <ul class="list-disc pl-5 text-sm">
+                    <li>Lecture séquentielle d'octets depuis une adresse mémoire (`[eax+ecx]`).</li>
+                    <li>Condition d'arrêt sur un octet null.</li>
+                    <li>Calcul répétitif impliquant une multiplication (par 31, une constante souvent utilisée dans les hash) et une addition avec la valeur de l'octet lu.</li>
+                </ul>
+            </li>
+             <li>
+                <strong>Reconstruction de la logique en pseudo-code :</strong>
+                <pre><code class="language-pseudocode">fonction simple_hash(pointeur input):
+  variable locale hash = 0
+  variable locale index = 0
+  
+  boucle:
+    caractere = lire_octet(input + index)
+    si caractere == 0:
+      aller à fin_boucle
+      
+    hash = (hash * 31) + caractere
+    index = index + 1
+    aller à boucle
+    
+  fin_boucle:
+  retourner hash</code></pre>
+                <p class="text-sm mt-1">Ce pseudo-code correspond directement à la fonction C `simple_hash` donnée au début.</p>
+            </li>
+        </ol>
+        <p class="mt-4 italic text-sm">Cette analyse, même sur un exemple simple, montre comment combiner l'observation des instructions, l'identification des structures de contrôle, et la compréhension des conventions d'appel pour reconstruire la logique d'une fonction à partir de son désassemblage.</p>
+    </div>
+
+</section> 

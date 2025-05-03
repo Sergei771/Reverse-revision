@@ -1,0 +1,453 @@
+<section id="assembly-basics-content" class="content-section">
+    <h2 class="text-3xl font-bold mb-6 gradient-text">Bases de l'Assembleur (x86/x64)</h2>
+
+    <div class="concept-card">
+        <h3 class="text-xl font-semibold mb-3">Pourquoi l'Assembleur en Reverse Engineering ?</h3>
+        <p>L'assembleur est le langage le plus proche du code machine exécuté par le processeur. Comprendre l'assembleur est essentiel pour analyser ce que fait réellement un programme compilé, identifier les vulnérabilités et comprendre le comportement des malwares, car c'est le langage que les outils comme Ghidra ou IDA affichent lors du désassemblage.</p>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Registres Principaux (x86/x64)</h3>
+
+    <!-- Registres Généraux -->
+    <div class="concept-card">
+        <h4 class="text-xl font-semibold mb-3">Registres Généraux (General-Purpose Registers - GPRs)</h4>
+        <p class="mb-4">Ces registres sont utilisés pour les opérations arithmétiques, logiques, le stockage temporaire de données, et parfois comme pointeurs. La nomenclature change entre 16, 32 et 64 bits, où les versions plus larges étendent les plus petites (par exemple, modifier EAX affecte AX, AH, AL; modifier RAX affecte EAX, AX, etc.).</p>
+        <div class="table-container">
+            <div class="custom-table">
+                <table>
+                    <thead>
+                        <tr><th>Registre (64/32/16/8H/8L)</th><th>Nom</th><th>Utilisation courante</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>RAX / EAX / AX / AH / AL</td><td>Accumulateur</td><td>Stocke souvent les résultats des opérations arithmétiques, la valeur de retour des fonctions (par convention).</td></tr>
+                        <tr><td>RBX / EBX / BX / BH / BL</td><td>Base</td><td>Utilisé comme pointeur de base pour l'adressage mémoire (moins courant en 64 bits), registre général. Doit être préservé par l'appelé (callee-saved) dans certaines conventions x64.</td></tr>
+                        <tr><td>RCX / ECX / CX / CH / CL</td><td>Compteur</td><td>Souvent utilisé comme compteur dans les boucles (`LOOP`), pour les décalages (`SHL`/`SHR`), 1er argument de fonction (Windows x64), 4ème argument (System V x64).</td></tr>
+                        <tr><td>RDX / EDX / DX / DH / DL</td><td>Données</td><td>Utilisé avec RAX/EAX pour les opérations 64/128 bits (multiplication, division), 2ème argument (Windows x64), 3ème argument (System V x64).</td></tr>
+                        <tr><td>RSI / ESI / SI</td><td>Source Index</td><td>Utilisé comme pointeur source dans les opérations sur les chaînes (`MOVSB`, `LODSB`), 2ème argument (System V x64).</td></tr>
+                        <tr><td>RDI / EDI / DI</td><td>Destination Index</td><td>Utilisé comme pointeur destination dans les opérations sur les chaînes, 1er argument (System V x64).</td></tr>
+                         <tr><td>R8 - R15</td><td>Registres R8 à R15</td><td>Registres généraux supplémentaires disponibles uniquement en mode 64 bits. R8/R9 utilisés pour les 3e/4e (Windows x64) ou 5e/6e (System V x64) arguments de fonction.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <p class="text-sm italic mt-2">Note: Les registres 8 bits haut (AH, BH, CH, DH) ne sont pas directement adressables lorsque le préfixe REX est utilisé en mode 64 bits.</p>
+    </div>
+
+    <!-- Registres Pointeur et Instruction -->
+    <div class="concept-card mt-4">
+        <h4 class="text-xl font-semibold mb-3">Registres de Pointeur et d'Instruction</h4>
+        <p class="mb-4">Ces registres ont des rôles spécifiques liés à la gestion de la pile et au flux d'exécution du programme.</p>
+        <div class="table-container">
+            <div class="custom-table">
+                <table>
+                     <thead>
+                        <tr><th>Registre (64/32/16)</th><th>Nom</th><th>Description</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>RSP / ESP / SP</td><td>Stack Pointer</td><td>Pointe vers le sommet actuel de la pile. Modifié par `PUSH`, `POP`, `CALL`, `RET` et les allocations/désallocations manuelles.</td></tr>
+                        <tr><td>RBP / EBP / BP</td><td>Base Pointer</td><td>Pointe vers la base du "stack frame" (cadre de pile) de la fonction courante. Utilisé pour accéder aux arguments de fonction et aux variables locales (surtout en 32 bits ou sans optimisations).</td></tr>
+                        <tr><td>RIP / EIP / IP</td><td>Instruction Pointer</td><td>Contient l'adresse de la prochaine instruction à exécuter par le processeur. Modifié par les sauts (`JMP`, `Jcc`), les appels (`CALL`) et les retours (`RET`). Ne peut pas être modifié directement par la plupart des instructions (sauf sauts/appels).</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registres Segment et Flags -->
+    <div class="concept-card mt-4">
+        <h4 class="text-xl font-semibold mb-3">Registres de Segment et EFLAGS/RFLAGS</h4>
+        <p class="mb-2">Les <strong>registres de segment</strong> (CS, DS, SS, ES, FS, GS) étaient cruciaux dans les anciens modes d'adressage pour définir des blocs de mémoire. En mode protégé 64 bits moderne (Linux/Windows), ils ont un rôle très limité. CS pointe toujours vers le segment de code, SS vers le segment de pile, DS/ES sont peu utilisés. FS ou GS sont souvent utilisés pour accéder à des structures spécifiques au thread (Thread Local Storage - TLS), comme le Thread Environment Block (TEB) sous Windows.</p>
+        <p class="mb-4">Le registre <strong>EFLAGS (32 bits) / RFLAGS (64 bits)</strong> contient des indicateurs (flags) qui reflètent l'état du processeur et le résultat de la dernière opération effectuée. Ils sont fondamentaux pour le contrôle de flux conditionnel.</p>
+        <div class="table-container">
+             <thead>
+                <tr><th>Flag</th><th>Nom</th><th>Description</th><th>Affecté par (exemples)</th></tr>
+            </thead>
+            <tbody>
+                 <tr><td>ZF</td><td>Zero Flag</td><td>Mis à 1 si le résultat de l'opération est zéro.</td><td>`CMP`, `SUB`, `ADD`, `TEST`, `AND`, `OR`, `XOR`, `INC`, `DEC`</td></tr>
+                 <tr><td>CF</td><td>Carry Flag</td><td>Mis à 1 s'il y a une retenue (addition) ou un emprunt (soustraction) non signé hors du bit le plus significatif. Utilisé aussi par les décalages/rotations.</td><td>`ADD`, `SUB`, `CMP`, `SHL`, `SHR`, `ROL`, `ROR`</td></tr>
+                 <tr><td>SF</td><td>Sign Flag</td><td>Mis à 1 si le bit le plus significatif (bit de signe) du résultat est 1 (indiquant un résultat négatif en complément à deux).</td><td>`ADD`, `SUB`, `CMP`, `TEST`, `AND`, `OR`, `XOR`, `INC`, `DEC`</td></tr>
+                 <tr><td>OF</td><td>Overflow Flag</td><td>Mis à 1 si le résultat d'une opération arithmétique signée dépasse la capacité du registre (overflow/underflow en complément à deux).</td><td>`ADD`, `SUB`, `IMUL`</td></tr>
+                 <tr><td>PF</td><td>Parity Flag</td><td>Mis à 1 si le nombre de bits à 1 dans l'octet de poids faible du résultat est pair. (Moins utilisé)</td><td>Opérations arithmétiques/logiques</td></tr>
+                 <tr><td>AF</td><td>Auxiliary Carry Flag</td><td>Similaire à CF, mais pour le 4ème bit (BCD). (Rarement utilisé)</td><td>Opérations arithmétiques</td></tr>
+                 <tr><td>DF</td><td>Direction Flag</td><td>Contrôle la direction (incrément/décrément) des pointeurs (RSI, RDI) dans les opérations sur les chaînes (`MOVS`, `STOS`, etc.). 0 = incrément, 1 = décrément. Modifié par `CLD` (clear, 0) et `STD` (set, 1).</td><td>`CLD`, `STD`</td></tr>
+                 <tr><td>IF</td><td>Interrupt Flag</td><td>Si mis à 1, autorise les interruptions matérielles externes. Modifié par `CLI` (clear, 0) et `STI` (set, 1).</td><td>`CLI`, `STI`</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Instructions Courantes (Syntaxe Intel)</h3>
+    <p class="mb-4 italic text-sm">Note: La syntaxe Intel (`instruction destination, source`) est couramment utilisée par les outils Windows et les désassembleurs comme IDA Pro et Ghidra par défaut. La syntaxe AT&T (`instruction %source, %destination`) est souvent vue dans les outils GNU/Linux.</p>
+
+    <!-- Mouvement de Données -->
+    <div class="concept-card">
+        <h4 class="text-xl font-semibold mb-3">Mouvement de Données</h4>
+        <p class="mb-2">Ces instructions servent à copier des données entre registres, entre registres et mémoire, ou à charger des valeurs immédiates.</p>
+        <ul class="list-disc pl-5 space-y-1 mb-3">
+            <li><strong>MOV (Move)</strong>: Copie la valeur de la `source` vers la `destination`. Ne modifie pas les flags. La taille des opérandes doit correspondre (ex: `mov eax, ebx` mais pas `mov ax, ebx`).</li>
+            <li><strong>LEA (Load Effective Address)</strong>: Calcule l'adresse de l'opérande `source` (qui doit être une adresse mémoire) et la place dans le registre `destination`. Crucial pour calculer des adresses sans accéder à la mémoire. Ne modifie pas les flags.</li>
+        </ul>
+        <pre><code class="language-nasm hljs language-x86asm">section .data
+    myVar dd 123      ; Variable 32 bits initialisée à 123
+    myArray dw 10, 20, 30 ; Tableau de 3 mots (16 bits)
+
+section .text
+    ; Exemple MOV
+    mov eax, 10          ; Met la valeur immédiate 10 dans EAX
+    mov ebx, eax         ; Copie le contenu de EAX dans EBX
+    mov ecx, [myVar]     ; Copie la valeur (123) de l'adresse myVar dans ECX
+    mov [myVar], edx     ; Copie le contenu de EDX à l'adresse mémoire de myVar
+    mov ax, [myArray+2]  ; Copie le 2ème élément (20) du tableau dans AX (+2 car 16 bits/word)
+
+    ; Exemple LEA
+    lea esi, [myArray]   ; Met l'adresse de myArray dans ESI (pointeur)
+    lea edi, [ebp-8]     ; Met l'adresse de la variable locale (sur la pile) dans EDI
+    lea eax, [ebx+ecx*4+100h] ; Calcule l'adresse complexe et la met dans EAX</code></pre>
+    </div>
+
+    <!-- Opérations Arithmétiques -->
+    <div class="concept-card mt-4">
+        <h4 class="text-xl font-semibold mb-3">Opérations Arithmétiques</h4>
+        <p class="mb-2">Effectuent des calculs mathématiques de base. Affectent les flags (ZF, SF, CF, OF, PF, AF).</p>
+        <ul class="list-disc pl-5 space-y-1 mb-3">
+            <li><strong>ADD destination, source</strong>: Ajoute `source` à `destination` (`destination = destination + source`).</li>
+            <li><strong>SUB destination, source</strong>: Soustrait `source` de `destination` (`destination = destination - source`). Souvent utilisé pour comparer (`CMP` est une soustraction qui ne stocke pas le résultat mais affecte les flags).</li>
+            <li><strong>INC destination</strong>: Incrémente `destination` de 1. Plus court et parfois plus rapide que `ADD destination, 1`. N'affecte PAS le Carry Flag (CF).</li>
+            <li><strong>DEC destination</strong>: Décrémente `destination` de 1. Plus court et parfois plus rapide que `SUB destination, 1`. N'affecte PAS le Carry Flag (CF).</li>
+            <li><strong>MUL source</strong> (non signé) / <strong>IMUL source</strong> (signé): Multiplie. La destination est implicite (AX, DX:AX, ou EDX:EAX, RDX:RAX selon la taille de `source`). `IMUL` existe aussi en formes 2 et 3 opérandes plus flexibles.</li>
+            <li><strong>DIV source</strong> (non signé) / <strong>IDIV source</strong> (signé): Divise. Le dividende est implicite (AX, DX:AX, EDX:EAX, RDX:RAX). Le quotient est stocké dans AL/AX/EAX/RAX et le reste dans AH/DX/EDX/RDX.</li>
+        </ul>
+         <pre><code class="language-nasm hljs language-x86asm">    mov eax, 100
+    mov ebx, 50
+    add eax, ebx    ; EAX = 150
+    sub eax, 20     ; EAX = 130
+    inc ebx         ; EBX = 51
+    dec eax         ; EAX = 129
+
+    mov ax, 5       ; Pour MUL/DIV 16 bits
+    mov bx, 10
+    mul bx          ; DX:AX = AX * BX = 5 * 10 = 50
+
+    mov eax, 103    ; Pour IDIV 32 bits
+    mov ecx, 10
+    cdq             ; Étend EAX en EDX:EAX (sign extension). EDX=0
+    idiv ecx        ; EDX:EAX / ECX. EAX = Quotient = 10, EDX = Reste = 3
+
+    imul esi, edi, 5 ; Forme 3 opérandes: ESI = EDI * 5</code></pre>
+    </div>
+
+    <!-- Opérations Logiques et Décalage -->
+    <div class="concept-card mt-4">
+        <h4 class="text-xl font-semibold mb-3">Opérations Logiques et de Décalage</h4>
+        <p class="mb-2">Effectuent des opérations booléennes bit-à-bit ou des décalages/rotations. Affectent principalement ZF, SF, PF. CF/OF sont affectés différemment selon l'instruction.</p>
+        <ul class="list-disc pl-5 space-y-1 mb-3">
+            <li><strong>AND destination, source</strong>: ET logique bit-à-bit (`destination = destination & source`). Souvent utilisé pour masquer des bits ou tester si un bit est à 0. Met OF=0, CF=0.</li>
+            <li><strong>OR destination, source</strong>: OU logique bit-à-bit (`destination = destination | source`). Souvent utilisé pour mettre des bits à 1. Met OF=0, CF=0.</li>
+            <li><strong>XOR destination, source</strong>: OU exclusif bit-à-bit (`destination = destination ^ source`). Utilisé pour inverser des bits ou mettre un registre à zéro (`xor eax, eax`). Met OF=0, CF=0.</li>
+            <li><strong>NOT destination</strong>: Inverse tous les bits de `destination` (complément à 1). N'affecte aucun flag.</li>
+             <li><strong>SHL/SAL destination, count</strong>: Décalage logique/arithmétique à gauche. Identiques. Décale les bits vers la gauche de `count` positions. Le dernier bit sorti va dans CF. Remplit avec des 0 à droite.</li>
+            <li><strong>SHR destination, count</strong>: Décalage logique à droite. Décale les bits vers la droite. Le dernier bit sorti va dans CF. Remplit avec des 0 à gauche (non signé).</li>
+            <li><strong>SAR destination, count</strong>: Décalage arithmétique à droite. Décale les bits vers la droite. Le dernier bit sorti va dans CF. Remplit avec le bit de signe à gauche (préserve le signe).</li>
+            <li><strong>ROL/ROR destination, count</strong>: Rotation à gauche/droite. Les bits sortis d'un côté rentrent de l'autre. Le dernier bit déplacé va aussi dans CF.</li>
+        </ul>
+        <pre><code class="language-nasm hljs language-x86asm">    mov al, 0b11001010
+    mov bl, 0b10101100
+    and al, bl   ; AL = 0b10001000
+    or al, 0b00000011 ; AL = 0b10001011
+    xor al, 0b11110000 ; AL = 0b01111011
+    not al       ; AL = 0b10000100
+
+    mov cl, 2
+    shl al, cl   ; AL = 0b00010000, CF=1 (le dernier 0 sorti)
+    sar al, 1    ; AL = 0b00001000, CF=0
+
+    xor ebx, ebx ; Met EBX à 0</code></pre>
+    </div>
+
+    <!-- Comparaison et Test -->
+    <div class="concept-card mt-4">
+        <h4 class="text-xl font-semibold mb-3">Comparaison et Test</h4>
+        <p class="mb-2">Ces instructions sont cruciales pour les branchements conditionnels car elles modifient les flags sans altérer les opérandes.</p>
+        <ul class="list-disc pl-5 space-y-1 mb-3">
+            <li><strong>CMP destination, source</strong>: Compare `destination` et `source` en effectuant une soustraction (`destination - source`) mais sans stocker le résultat. Affecte les flags (ZF, SF, CF, OF, PF, AF) comme `SUB`. Utilisé pour vérifier l'égalité, la supériorité, l'infériorité, etc.</li>
+            <li><strong>TEST destination, source</strong>: Effectue un ET logique bit-à-bit (`destination & source`) sans stocker le résultat. Affecte les flags (ZF, SF, PF) comme `AND` (met CF=0, OF=0). Très utilisé pour vérifier si un ou plusieurs bits spécifiques sont à 1 ou à 0 dans un opérande.</li>
+        </ul>
+        <pre><code class="language-nasm hljs language-x86asm">    mov eax, 10
+    mov ebx, 5
+    cmp eax, ebx ; Compare 10 et 5. Flags: ZF=0, SF=0, CF=0 (10 > 5)
+    ; je label_si_egal   ; Ne sautera pas car ZF=0
+    ; jg label_si_sup    ; Sautera car SF=OF (implicite) et ZF=0
+
+    cmp eax, 10  ; Compare 10 et 10. Flags: ZF=1, SF=0, CF=0
+    ; je label_si_egal   ; Sautera car ZF=1
+
+    mov ecx, 0b1011
+    test ecx, 0b0010 ; Teste si le 2ème bit (valeur 2) est à 1.
+                     ; Résultat (non stocké) = 0b0010. ZF=0.
+    ; jz label_si_bit_zero ; Ne sautera pas
+
+    test ecx, 0b0100 ; Teste si le 3ème bit (valeur 4) est à 1.
+                     ; Résultat (non stocké) = 0b0000. ZF=1.
+    ; jz label_si_bit_zero ; Sautera car ZF=1</code></pre>
+    </div>
+
+    <!-- Contrôle de Flux -->
+    <div class="concept-card mt-4">
+        <h4 class="text-xl font-semibold mb-3">Contrôle de Flux</h4>
+        <p class="mb-2">Ces instructions modifient le registre `RIP`/`EIP` pour changer l'ordre d'exécution des instructions.</p>
+        <ul class="list-disc pl-5 space-y-1 mb-3">
+            <li><strong>JMP target</strong>: Saut inconditionnel. Transfère l'exécution à l'adresse `target` (une étiquette ou une adresse calculée).</li>
+            <li><strong>Jcc target (Conditional Jumps)</strong>: Saut conditionnel. Transfère l'exécution à `target` seulement si une condition basée sur les flags est remplie. Il existe de nombreuses conditions :</li>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li>Égalité/Zéro : `JE` (Jump if Equal) / `JZ` (Jump if Zero) -> saute si ZF=1</li>
+                    <li>Inégalité/Non Zéro : `JNE` (Jump if Not Equal) / `JNZ` (Jump if Not Zero) -> saute si ZF=0</li>
+                    <li>Signé - Supérieur/Inférieur : `JG` (Greater), `JL` (Less), `JGE` (Greater or Equal), `JLE` (Less or Equal) -> basés sur SF, OF, ZF</li>
+                    <li>Non signé - Au-dessus/En dessous : `JA` (Above), `JB` (Below), `JAE` (Above or Equal), `JBE` (Below or Equal) -> basés sur CF, ZF</li>
+                    <li>Autres : `JS` (Sign), `JNS` (Not Sign), `JC` (Carry), `JNC` (Not Carry), `JO` (Overflow), `JNO` (Not Overflow), `JP` (Parity), `JNP` (Not Parity)</li>
+                 </ul>
+            <li><strong>CALL target</strong>: Appelle une fonction. Empile (`push`) l'adresse de l'instruction suivante (adresse de retour) sur la pile, puis saute (`jmp`) à `target`.</li>
+            <li><strong>RET</strong>: Retourne d'une fonction. Dépile (`pop`) l'adresse de retour de la pile et saute (`jmp`) à cette adresse. Peut prendre un opérande optionnel (principalement en `stdcall` 32 bits) pour nettoyer des arguments de la pile.</li>
+        </ul>
+         <pre><code class="language-nasm hljs language-x86asm">my_function:
+    ; ... corps de fonction ...
+    ret
+
+start:
+    mov eax, 10
+    cmp eax, 20
+    jl less_than_20  ; Sautera car 10 < 20 (SF != OF)
+    jmp continue_here ; Saut inconditionnel
+
+less_than_20:
+    call print_message ; Empile l'adresse de 'continue_here' et saute à print_message
+    ; ... (adresse de retour) ...
+
+continue_here:
+    ; ... suite du code ...</code></pre>
+    </div>
+
+    <!-- Manipulation de la Pile -->
+    <div class="concept-card mt-4">
+        <h4 class="text-xl font-semibold mb-3">Manipulation de la Pile (Stack)</h4>
+        <p class="mb-2">La pile est une zone mémoire LIFO (Last-In, First-Out) essentielle pour les appels de fonction, les variables locales et le passage d'arguments. Le registre `RSP`/`ESP` pointe vers le sommet de la pile, qui grandit généralement vers les adresses basses.</p>
+        <ul class="list-disc pl-5 space-y-1 mb-3">
+            <li><strong>PUSH source</strong>: Décrémente `RSP`/`ESP` de la taille de l'opérande (4 ou 8 octets), puis copie la valeur de `source` à l'adresse pointée par le nouveau `RSP`/`ESP`.</li>
+            <li><strong>POP destination</strong>: Copie la valeur depuis l'adresse pointée par `RSP`/`ESP` vers `destination`, puis incrémente `RSP`/`ESP` de la taille de l'opérande.</li>
+        </ul>
+         <pre><code class="language-nasm hljs language-x86asm">
+    mov eax, 111
+    mov ebx, 222
+    push eax        ; RSP diminue de 4, [RSP] = 111
+    push ebx        ; RSP diminue de 4, [RSP] = 222
+    ; La pile contient maintenant: 222 (au sommet), 111
+
+    pop ecx         ; ECX = 222, RSP augmente de 4
+    pop edx         ; EDX = 111, RSP augmente de 4
+    ; ECX=222, EDX=111, RSP revenu à sa valeur initiale
+    </code></pre>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Adressage Mémoire</h3>
+    <!-- TODO: Expliquer les modes d'adressage (immédiat, registre, direct, indirect) -->
+    <div class="concept-card mt-4">
+        <h4 class="text-xl font-semibold mb-3">Modes d'Adressage Mémoire</h4>
+        <p class="mb-4">L'assembleur x86/x64 offre plusieurs façons de spécifier l'emplacement des données (opérandes) pour les instructions, en particulier pour accéder à la mémoire. Comprendre ces modes est crucial pour lire le code désassemblé.</p>
+        <div class="table-container">
+            <div class="custom-table">
+                <table>
+                    <thead>
+                        <tr><th>Mode</th><th>Syntaxe Exemple (Intel)</th><th>Description</th><th>Usage typique</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Immédiat (Immediate)</td>
+                            <td><code>mov eax, 12345</code></td>
+                            <td>La donnée est une constante directement incluse dans l'instruction.</td>
+                            <td>Initialiser des registres, utiliser des constantes.</td>
+                        </tr>
+                        <tr>
+                            <td>Registre (Register)</td>
+                            <td><code>mov eax, ebx</code></td>
+                            <td>La donnée se trouve dans un autre registre.</td>
+                            <td>Calculs rapides, manipulation de données temporaires.</td>
+                        </tr>
+                         <tr>
+                            <td>Direct Mémoire (Direct)</td>
+                            <td><code>mov eax, [myVariable]</code><br><code>mov eax, [0x401000]</code></td>
+                            <td>L'adresse mémoire de la donnée est spécifiée directement comme une constante (souvent une étiquette ou une adresse absolue).</td>
+                            <td>Accéder à des variables globales ou statiques à adresse fixe.</td>
+                        </tr>
+                         <tr>
+                            <td>Indirect Registre (Register Indirect)</td>
+                            <td><code>mov eax, [ebx]</code></td>
+                            <td>Le registre contient l'adresse mémoire de la donnée.</td>
+                            <td>Accéder à des données via un pointeur stocké dans un registre.</td>
+                        </tr>
+                        <tr>
+                            <td>Indirect avec Déplacement (Indirect with Displacement)</td>
+                            <td><code>mov eax, [ebx + 8]</code><br><code>mov eax, [ebp - 16]</code></td>
+                            <td>L'adresse est calculée en ajoutant un déplacement constant (offset) à la valeur d'un registre.</td>
+                            <td>Accéder aux membres d'une structure via un pointeur, accéder aux variables locales/arguments sur la pile via EBP/RBP.</td>
+                        </tr>
+                         <tr>
+                            <td>Indexé (Based Indexed)</td>
+                            <td><code>mov eax, [ebx + esi]</code></td>
+                            <td>L'adresse est calculée en ajoutant le contenu de deux registres (un registre de base et un registre d'index).</td>
+                            <td>Accéder à des éléments dans des structures de données bidimensionnelles (moins courant que Scaled Indexed).</td>
+                        </tr>
+                         <tr>
+                            <td>Indexé avec Déplacement (Based Indexed with Displacement)</td>
+                            <td><code>mov eax, [ebx + esi + 12]</code></td>
+                            <td>L'adresse est la somme d'un registre de base, d'un registre d'index et d'un déplacement constant.</td>
+                            <td>Accès complexe à des structures imbriquées ou des tableaux de structures.</td>
+                        </tr>
+                         <tr>
+                            <td>Indexé avec Facteur d'Échelle (Scaled Indexed)</td>
+                            <td><code>mov eax, [ebx + esi * 4]</code></td>
+                            <td>L'adresse est calculée en ajoutant un registre de base au contenu d'un registre d'index multiplié par un facteur d'échelle (1, 2, 4 ou 8).</td>
+                            <td>Accès aux éléments d'un tableau où l'index est dans `esi` et la taille de l'élément est le facteur d'échelle (ex: 4 pour `int` ou `float`). `ebx` contient l'adresse de base du tableau.</td>
+                        </tr>
+                        <tr>
+                            <td>Indexé avec Facteur d'Échelle et Déplacement (Scaled Indexed with Displacement)</td>
+                            <td><code>mov eax, [ebx + esi * 4 + myStruct.arrayOffset]</code><br><code>mov eax, [ebp + esi*8 - 32]</code></td>
+                            <td>Forme la plus générale : adresse = base + (index * échelle) + déplacement.</td>
+                            <td>Accéder à des éléments d'un tableau à l'intérieur d'une structure, ou d'un tableau de structures sur la pile.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <pre><code class="language-nasm hljs language-x86asm mt-4">section .data
+    myGlobalVar dd 100
+    myArray     dd 10, 20, 30, 40  ; Tableau d'entiers 32 bits (taille 4)
+
+section .bss
+    myBuffer resb 256
+
+section .text
+    global _start
+_start:
+    ; Registre
+    mov eax, 1          ; Mode Immédiat
+    mov ebx, eax        ; Mode Registre
+
+    ; Direct Mémoire
+    mov ecx, [myGlobalVar] ; Charge 100 dans ECX
+
+    ; Indirect Registre
+    mov esi, myBuffer   ; ESI pointe sur le début de myBuffer
+    mov byte [esi], 'A' ; Écrit 'A' au début du buffer
+
+    ; Indirect avec Déplacement
+    mov edi, esi        ; EDI pointe aussi sur myBuffer
+    mov byte [edi + 1], 'B' ; Écrit 'B' à l'offset 1 du buffer
+
+    ; Indexé avec Facteur d'Échelle (accès à myArray[2])
+    mov ebx, myArray    ; EBX = adresse de base de myArray
+    mov esi, 2          ; ESI = index
+    mov edx, [ebx + esi * 4] ; EDX = myArray[2] (qui est 30)
+
+    ; Indexé avec Facteur d'Échelle et Déplacement
+    ; Supposons qu'une structure à [ebp-40] contienne un tableau à l'offset 8
+    ; Accès à struct.array[esi] où array est un tableau de mots (taille 2)
+    ; mov ax, [ebp + esi * 2 - 32] ; -40 (base struct) + 8 (offset array) = -32
+
+    ; Sortie propre (exemple simple)
+    mov eax, 1          ; sys_exit
+    xor ebx, ebx        ; code de retour 0
+    int 0x80            ; Appel système Linux 32 bits</code></pre>
+    </div>
+
+    <h3 class="text-2xl font-semibold mt-8 mb-4">Conventions d'Appel (Calling Conventions)</h3>
+    <p class="mb-4">Une convention d'appel est un ensemble de règles standardisées qui définissent comment les fonctions sont appelées, comment les arguments sont passés, comment les valeurs sont retournées, et quels registres doivent être préservés. Connaître la convention d'appel est essentiel pour comprendre les interactions entre fonctions.</p>
+
+    <!-- Conventions 32 bits -->
+    <div class="concept-card">
+        <h4 class="text-xl font-semibold mb-3">Conventions 32 bits (x86)</h4>
+        <p class="mb-4">Bien que moins pertinent aujourd'hui, comprendre ces conventions est utile pour analyser d'anciens binaires ou des binaires 32 bits.</p>
+        <div class="table-container">
+            <div class="custom-table">
+                <table>
+                    <thead>
+                        <tr><th>Convention</th><th>Passage Arguments</th><th>Nettoyage Pile</th><th>Registres Préservés (Callee-saved)</th><th>Nom Décoré (C/C++)</th><th>Utilisation Typique</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>`cdecl`</td><td>Pile (droite->gauche)</td><td>Appelant (Caller)</td><td>EBX, ESI, EDI, EBP</td><td>`_maFonction`</td><td>Compilateurs C/C++ par défaut (GCC, Clang, MSVC en 32 bits C)</td></tr>
+                        <tr><td>`stdcall`</td><td>Pile (droite->gauche)</td><td>Appelé (Callee)</td><td>EBX, ESI, EDI, EBP</td><td>`_maFonction@N` (N=taille args en octets)</td><td>API Win32</td></tr>
+                        <tr><td>`fastcall` (MSVC)</td><td>ECX, EDX puis Pile (droite->gauche)</td><td>Appelé (Callee)</td><td>EBX, ESI, EDI, EBP</td><td>`@maFonction@N`</td><td>Optimisations MSVC</td></tr>
+                        <tr><td>`fastcall` (GCC/Clang)</td><td>ECX, EDX puis Pile (droite->gauche)</td><td>Appelant (Caller)</td><td>EBX, ESI, EDI, EBP</td><td>`maFonction` (peut varier)</td><td>Optimisations GCC/Clang</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conventions 64 bits -->
+    <div class="concept-card mt-4">
+        <h4 class="text-xl font-semibold mb-3">Conventions 64 bits (x64)</h4>
+        <p class="mb-4">En 64 bits, le passage d'arguments via les registres est la norme, ce qui est plus efficace. Les deux conventions principales diffèrent légèrement.</p>
+         <div class="table-container">
+             <div class="custom-table">
+                 <table>
+                    <thead>
+                        <tr><th>Caractéristique</th><th>System V AMD64 ABI (Linux, macOS, etc.)</th><th>Microsoft x64 (Windows)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Arguments Entiers/Pointeurs (1er, 2e, 3e, 4e, 5e, 6e)</td><td>RDI, RSI, RDX, RCX, R8, R9</td><td>RCX, RDX, R8, R9, (Pile), (Pile)</td></tr>
+                        <tr><td>Arguments Flottants</td><td>XMM0 - XMM7</td><td>XMM0 - XMM3 (identiques aux entiers pour la position), puis Pile</td></tr>
+                        <tr><td>Arguments Supplémentaires</td><td>Pile (droite->gauche)</td><td>Pile (droite->gauche)</td></tr>
+                        <tr><td>Nettoyage Pile</td><td>Appelant (Caller)</td><td>Appelant (Caller)</td></tr>
+                        <tr><td>Valeur Retour (Entier/Poin.)</td><td>RAX</td><td>RAX</td></tr>
+                        <tr><td>Valeur Retour (Flottant)</td><td>XMM0</td><td>XMM0</td></tr>
+                        <tr><td>Registres Préservés (Callee-saved)</td><td>RBX, RBP, R12, R13, R14, R15</td><td>RBX, RBP, RSI, RDI, R12, R13, R14, R15, XMM6-XMM15</td></tr>
+                        <tr><td>Registres Volatils (Caller-saved)</td><td>RAX, RCX, RDX, RSI, RDI, R8, R9, R10, R11, XMM0-XMM15</td><td>RAX, RCX, RDX, R8, R9, R10, R11, XMM0-XMM5</td></tr>
+                        <tr><td>Espace "Shadow" sur Pile (par Appelant)</td><td>Non</td><td>Oui (32 octets minimum, pour les 4 premiers args registre)</td></tr>
+                        <tr><td>Alignement Pile avant CALL</td><td>16 octets</td><td>16 octets</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prologue/Epilogue -->
+    <div class="concept-card mt-4">
+        <h4 class="text-xl font-semibold mb-3">Prologue et Épilogue de Fonction</h4>
+        <p class="mb-2">Ce sont des séquences d'instructions standardisées au début et à la fin des fonctions, principalement pour gérer le cadre de pile (`stack frame`). Le cadre de pile est une zone de la pile réservée pour une instance d'appel de fonction, contenant typiquement l'adresse de retour, les arguments (si passés sur la pile), les variables locales et les registres sauvegardés.</p>
+        <p class="mb-4">Le <strong>prologue</strong> typique (surtout sans optimisations ou en 32 bits) :</p>
+        <ol class="list-decimal pl-5 space-y-1 mb-3">
+            <li>Sauvegarde l'ancien pointeur de base (`push rbp`/`push ebp`).</li>
+            <li>Établit le nouveau pointeur de base pour le cadre actuel (`mov rbp, rsp` / `mov ebp, esp`).</li>
+            <li>Alloue de l'espace sur la pile pour les variables locales et les registres temporaires en décrémentant le pointeur de pile (`sub rsp, N` / `sub esp, N`).</li>
+            <li>(Optionnel) Sauvegarde les registres non-volatils (callee-saved) qui seront utilisés par la fonction.</li>
+        </ol>
+        <p class="mb-4">L'<strong>épilogue</strong> typique effectue l'inverse pour restaurer l'état avant le retour :</p>
+        <ol class="list-decimal pl-5 space-y-1 mb-3">
+            <li>(Optionnel) Restaure les registres non-volatils sauvegardés.</li>
+            <li>Libère l'espace des variables locales en restaurant l'ancien pointeur de pile (`mov rsp, rbp` / `mov esp, ebp`). L'instruction `leave` combine cette étape et la suivante.</li>
+            <li>Restaure l'ancien pointeur de base (`pop rbp` / `pop ebp`).</li>
+            <li>Retourne à l'appelant (`ret`).</li>
+        </ol>
+        <pre><code class="language-nasm hljs language-x86asm">; Prologue typique (x64, non optimisé)
+push rbp          ; 1. Sauvegarde l'ancien RBP
+mov rbp, rsp      ; 2. RBP pointe maintenant vers la base du cadre actuel
+sub rsp, 32       ; 3. Alloue 32 octets pour les locales (par exemple)
+; push rbx        ; 4. Exemple: sauvegarde du registre non-volatil RBX s'il est utilisé
+
+; ... corps de la fonction ...
+; Utilise [rbp - 8], [rbp - 16], etc. pour accéder aux locales
+
+; Épilogue typique (x64, non optimisé)
+; pop rbx         ; 1. Restaure RBX
+mov rsp, rbp      ; 2. Libère l'espace des locales (alternative: leave)
+pop rbp           ; 3. Restaure l'ancien RBP
+ret               ; 4. Retourne à l'appelant
+
+; Alternative avec leave (combine mov rsp, rbp et pop rbp)
+; ... (corps fonction) ...
+; pop rbx
+leave
+ret
+</code></pre>
+        <p class="text-sm italic mt-2">Note: Les compilateurs modernes avec optimisations peuvent omettre le pointeur de base (`RBP`/`EBP`) et accéder aux variables locales directement via des offsets par rapport à `RSP`/`ESP`, rendant le prologue/épilogue plus courts mais l'analyse manuelle parfois plus complexe.</p>
+    </div>
+
+</section> 
